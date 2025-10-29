@@ -1,4 +1,5 @@
-﻿using DAL.Repositories;
+﻿using DAL.Classes;
+using DAL.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +23,7 @@ namespace FribergsApi.Controllers
         {
             try
             {
-                var cars = await _carRepository.GetAllCarsAsync();  // Förutsätter att GetAllCarsAsync finns i ditt repository
+                var cars = await _carRepository.GetAllAsync();  // Förutsätter att GetAllCarsAsync finns i ditt repository
                 if (cars == null)
                 {
                     return NotFound("No cars found.");
@@ -41,7 +42,7 @@ namespace FribergsApi.Controllers
         {
             try
             {
-                var car = await _carRepository.GetCarByIdAsync(id);  // Förutsätter att GetCarByIdAsync finns i ditt repository
+                var car = await _carRepository.GetByIdAsync(id);  // Förutsätter att GetCarByIdAsync finns i ditt repository
                 if (car == null)
                 {
                     return NotFound($"Car with ID {id} not found.");
@@ -65,8 +66,8 @@ namespace FribergsApi.Controllers
                     return BadRequest("Car data is required.");
                 }
 
-                await _carRepository.AddCarAsync(car);  // Förutsätter att AddCarAsync finns i ditt repository
-                return CreatedAtAction(nameof(GetCar), new { id = car.Id }, car);
+                await _carRepository.AddAsync(car);  // Förutsätter att AddCarAsync finns i ditt repository
+                return CreatedAtAction(nameof(GetCar), new { id = car.CarId }, car);
             }
             catch (System.Exception ex)
             {
@@ -80,18 +81,18 @@ namespace FribergsApi.Controllers
         {
             try
             {
-                if (id != car.Id)
+                if (id != car.CarId)
                 {
                     return BadRequest("Car ID mismatch.");
                 }
 
-                var existingCar = await _carRepository.GetCarByIdAsync(id);
+                var existingCar = await _carRepository.GetByIdAsync(id);
                 if (existingCar == null)
                 {
                     return NotFound($"Car with ID {id} not found.");
                 }
 
-                await _carRepository.UpdateCarAsync(car);  // Förutsätter att UpdateCarAsync finns i ditt repository
+                await _carRepository.UpdateAsync(car);  // Förutsätter att UpdateCarAsync finns i ditt repository
                 return NoContent();
             }
             catch (System.Exception ex)
@@ -106,13 +107,13 @@ namespace FribergsApi.Controllers
         {
             try
             {
-                var car = await _carRepository.GetCarByIdAsync(id);
+                var car = await _carRepository.GetByIdAsync(id);
                 if (car == null)
                 {
                     return NotFound($"Car with ID {id} not found.");
                 }
 
-                await _carRepository.DeleteCarAsync(id);  // Förutsätter att DeleteCarAsync finns i ditt repository
+                await _carRepository.DeleteAsync(id);  // Förutsätter att DeleteCarAsync finns i ditt repository
                 return NoContent();
             }
             catch (System.Exception ex)
