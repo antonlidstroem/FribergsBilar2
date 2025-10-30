@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using DAL.Classes;
 
 namespace DAL.Classes
@@ -7,6 +8,7 @@ namespace DAL.Classes
     {
         public int CarId { get; set; }
 
+        [JsonIgnore]
         public List<CarImage> CarImages { get; set; } = new();
        
         public string Brand { get; set; }

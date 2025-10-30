@@ -1,10 +1,17 @@
 
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using DAL.Classes;
 using DAL.Repositories;
+using FribergsApi.MappingProfile;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+
+
 
 
 namespace FribergsApi
@@ -17,6 +24,19 @@ namespace FribergsApi
 
             // Add services to the container.
 
+            //Hämta connectionstring
+            var connectionstring = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found");
+
+            //Lägg till DbContext från DAL-projektet
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(connectionstring));
+
+            //Lägg till AutoMapper
+            builder.Services.AddAutoMapper(cfg => 
+            {}, typeof(CarProfile));
+
+        
 
             //Koppla DAL-repositories till Db
             builder.Services.AddScoped<ICarRepository, CarRepository>();
@@ -24,19 +44,10 @@ namespace FribergsApi
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
 
-            // Konfiguration av databasen, Identity, och repositories
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                                   ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
-
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-                options.SignIn.RequireConfirmedAccount = false)
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-
-
-        
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                   options.SignIn.RequireConfirmedAccount = false)
+                   .AddEntityFrameworkStores<ApplicationDbContext>()
+                   .AddDefaultTokenProviders();
 
             builder.Services.AddCors(options =>
             {
@@ -48,11 +59,16 @@ namespace FribergsApi
                 });
             });
 
-            
 
 
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                });
+
+
+
             builder.Services.AddOpenApi();
 
             // JWT Authentication
@@ -63,7 +79,7 @@ namespace FribergsApi
             })
             .AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false; 
+                options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -101,8 +117,6 @@ namespace FribergsApi
         });
             });
 
-
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -112,19 +126,36 @@ namespace FribergsApi
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+                    c.RoutePrefix = string.Empty;
                 });
             }
 
+            string url = "https://localhost:7251/index.html";
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error opening browser: " + ex.Message);
+            }
+
+
+
+
+
+
+
 
             app.UseCors("AllowAll");
-            
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }

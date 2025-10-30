@@ -1,5 +1,7 @@
-﻿using DAL.Classes;
+﻿using AutoMapper;
+using DAL.Classes;
 using DAL.Repositories;
+using FribergsApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,24 +13,30 @@ namespace FribergsApi.Controllers
     {
         private readonly ICarRepository _carRepository;
         private readonly ILogger<CarsController> _logger;
+        private readonly IMapper _mapper;
 
-        public CarsController(ICarRepository carRepository, ILogger<CarsController> logger)
+        public CarsController(ICarRepository carRepository, ILogger<CarsController> logger, IMapper mapper)
         {
             _carRepository = carRepository;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Car>>> GetCars()
+        public async Task<ActionResult<IEnumerable<CarDto>>> GetCars()
         {
             try
             {
-                var cars = await _carRepository.GetAllAsync();  // Förutsätter att GetAllCarsAsync finns i ditt repository
+                var cars = await _carRepository.GetAllAsync();
                 if (cars == null)
                 {
                     return NotFound("No cars found.");
                 }
-                return Ok(cars);
+
+                //Mapping
+                var carDtos = _mapper.Map<IEnumerable<CarDto>>(cars);
+                return Ok(carDtos);
+
             }
             catch (System.Exception ex)
             {
@@ -38,16 +46,18 @@ namespace FribergsApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Car>> GetCar(int id)
+        public async Task<ActionResult<CarDto>> GetCar(int id)
         {
             try
             {
-                var car = await _carRepository.GetByIdAsync(id);  // Förutsätter att GetCarByIdAsync finns i ditt repository
+                var car = await _carRepository.GetByIdAsync(id);
                 if (car == null)
                 {
                     return NotFound($"Car with ID {id} not found.");
                 }
-                return Ok(car);
+
+                var carDto = _mapper.Map<CarDto>(car);
+                return Ok(carDto);
             }
             catch (System.Exception ex)
             {
@@ -56,18 +66,25 @@ namespace FribergsApi.Controllers
             }
         }
 
+        
+
         [HttpPost]
-        public async Task<ActionResult<Car>> CreateCar([FromBody] Car car)
+        public async Task<ActionResult<CarDto>> CreateCar([FromBody] CarDto carDto)
         {
             try
             {
-                if (car == null)
+                if (carDto == null)
                 {
                     return BadRequest("Car data is required.");
                 }
 
-                await _carRepository.AddAsync(car);  // Förutsätter att AddCarAsync finns i ditt repository
-                return CreatedAtAction(nameof(GetCar), new { id = car.CarId }, car);
+
+                var car = _mapper.Map<Car>(carDto);
+                await _carRepository.AddAsync(car);
+
+                var createdCarDto = _mapper.Map<CarDto>(car);
+                return CreatedAtAction(nameof(GetCar), new { id = car.CarId }, createdCarDto);
+
             }
             catch (System.Exception ex)
             {
@@ -77,11 +94,11 @@ namespace FribergsApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCar(int id, [FromBody] Car car)
+        public async Task<ActionResult> UpdateCar(int id, [FromBody] CarDto carDto)
         {
             try
             {
-                if (id != car.CarId)
+                if (id != carDto.CarId)
                 {
                     return BadRequest("Car ID mismatch.");
                 }
@@ -92,10 +109,12 @@ namespace FribergsApi.Controllers
                     return NotFound($"Car with ID {id} not found.");
                 }
 
-                await _carRepository.UpdateAsync(car);  // Förutsätter att UpdateCarAsync finns i ditt repository
+                var car = _mapper.Map<Car>(carDto);
+                await _carRepository.UpdateAsync(car);
+
                 return NoContent();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while updating the car.");
                 return StatusCode(500, "Internal server error");
@@ -113,7 +132,7 @@ namespace FribergsApi.Controllers
                     return NotFound($"Car with ID {id} not found.");
                 }
 
-                await _carRepository.DeleteAsync(id);  // Förutsätter att DeleteCarAsync finns i ditt repository
+                await _carRepository.DeleteAsync(id);  
                 return NoContent();
             }
             catch (System.Exception ex)
@@ -122,5 +141,6 @@ namespace FribergsApi.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        
     }
 }
