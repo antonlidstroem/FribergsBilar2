@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Linq;
+using FribergsApi.Models;
 
 namespace FribergsApi.Controllers
 {
@@ -28,28 +29,20 @@ namespace FribergsApi.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] LoginUserDto model)
         {
-            var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                return Ok(new { Message = "User registered successfully." });
-            }
-            return BadRequest(result.Errors);
-        }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
-        {
-            var user = await _userManager.FindByNameAsync(model.Username);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
-            {
                 var claims = new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id)
                 };
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -62,26 +55,54 @@ namespace FribergsApi.Controllers
                     signingCredentials: creds
                 );
 
-                return Ok(new
+                var authResponse = new AuthResponse
                 {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token)
-                });
+                    UserId = user.Id,
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    Email = user.Email
+                };
+
+                return Ok(authResponse);
             }
 
-            return Unauthorized(new { Message = "Invalid credentials" });
+            return BadRequest(result.Errors);
         }
-    }
 
-    public class RegisterModel
-    {
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserDto model)
+        {
+            var user = await _userManager.FindByNameAsync(model.Email);
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            {
+                var claims = new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id)
+                };
 
-    public class LoginModel
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken(
+                    _configuration["Jwt:Issuer"],
+                    _configuration["Jwt:Audience"],
+                    claims,
+                    expires: DateTime.Now.AddDays(1),
+                    signingCredentials: creds
+                );
+
+                var authResponse = new AuthResponse
+                {
+                    UserId = user.Id,
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    Email = user.Email
+                };
+
+                return Ok(authResponse);
+            }
+
+            return Unauthorized(new { Message = "Invalid credentials" }); ;
+        }
     }
 }
