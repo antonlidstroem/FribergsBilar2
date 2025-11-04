@@ -25,6 +25,8 @@ namespace FribergsApi.MappingProfile
             CreateMap<CarImage, CarImageDto>()
                 .ForMember(dest => dest.CarImageId, opt => opt.MapFrom(src => src.CarImageId))
                 .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Url)); 
+
+
         }
     }
 }

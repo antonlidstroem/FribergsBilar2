@@ -52,11 +52,19 @@ namespace FribergsApi
             });
 
             // Controllers
+            //builder.Services.AddControllers()
+            //    .AddJsonOptions(options =>
+            //    {
+            //        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+            //    });
+
             builder.Services.AddControllers()
-                .AddJsonOptions(options =>
+              .AddJsonOptions(options =>
                 {
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null; 
                 });
+
 
             // Swagger
             builder.Services.AddSwaggerGen(c =>
