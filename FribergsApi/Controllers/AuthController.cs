@@ -114,10 +114,10 @@ namespace FribergsApi.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> GetMe()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null) return Unauthorized();
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (email == null) return Unauthorized();
 
-            var user = await _userService.GetUserByIdAsync(userId);
+            var user = await _userService.GetUserByEmailAsync(email);
             if (user == null) return NotFound();
 
             var roles = await _userService.GetRolesAsync(user);
@@ -128,5 +128,6 @@ namespace FribergsApi.Controllers
                 Roles = roles
             });
         }
+
     }
 }
