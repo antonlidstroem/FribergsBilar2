@@ -2,12 +2,10 @@
 using System.Security.Claims;
 using System.Text;
 using DAL.Classes;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using FribergsApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Linq;
-using FribergsApi.Models;
 
 namespace FribergsApi.Controllers
 {
@@ -15,94 +13,120 @@ namespace FribergsApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserService _userService;
         private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<ApplicationUser> userManager,
-                              SignInManager<ApplicationUser> signInManager,
-                              IConfiguration configuration)
+        public AuthController(UserService userService, IConfiguration configuration)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _userService = userService;
             _configuration = configuration;
         }
 
+        // ---------------------------
+        // REGISTER
+        // ---------------------------
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] LoginUserDto model)
         {
-            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            if (result.Succeeded)
+            var user = await _userService.RegisterAsync(
+                firstName: "",
+                lastName: "",
+                email: model.Email,
+                password: model.Password,
+                role: "User"
+            );
+
+            if (user == null)
+                return BadRequest("User already exists or could not be created.");
+
+            var token = await GenerateJwtToken(user);
+
+            return Ok(new AuthResponse
             {
-
-                var claims = new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id)
-                };
-
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var token = new JwtSecurityToken(
-                    _configuration["Jwt:Issuer"],
-                    _configuration["Jwt:Audience"],
-                    claims,
-                    expires: DateTime.Now.AddDays(1),
-                    signingCredentials: creds
-                );
-
-                var authResponse = new AuthResponse
-                {
-                    UserId = user.Id,
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    Email = user.Email
-                };
-
-                return Ok(authResponse);
-            }
-
-            return BadRequest(result.Errors);
+                UserId = user.Id,
+                Token = token,
+                Email = user.Email
+            });
         }
 
+        // ---------------------------
+        // LOGIN
+        // ---------------------------
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto model)
         {
-            var user = await _userManager.FindByNameAsync(model.Email);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _userService.ValidateUserAsync(model.Email, model.Password);
+            if (user == null)
+                return Unauthorized("Invalid email or password.");
+
+            var token = await GenerateJwtToken(user);
+
+            return Ok(new AuthResponse
             {
-                var claims = new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id)
-                };
+                UserId = user.Id,
+                Token = token,
+                Email = user.Email
+            });
+        }
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var token = new JwtSecurityToken(
-                    _configuration["Jwt:Issuer"],
-                    _configuration["Jwt:Audience"],
-                    claims,
-                    expires: DateTime.Now.AddDays(1),
-                    signingCredentials: creds
-                );
+        // ---------------------------
+        // GENERATE JWT TOKEN (privat)
+        // ---------------------------
+        private async Task<string> GenerateJwtToken(ApplicationUser user)
+        {
+            var roles = await _userService.GetRolesAsync(user);
 
-                var authResponse = new AuthResponse
-                {
-                    UserId = user.Id,
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    Email = user.Email
-                };
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
+            };
 
-                return Ok(authResponse);
-            }
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
 
-            return Unauthorized(new { Message = "Invalid credentials" }); ;
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        // ---------------------------
+        // GET CURRENT USER ("me")
+        // ---------------------------
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMe()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user == null) return NotFound();
+
+            var roles = await _userService.GetRolesAsync(user);
+
+            return Ok(new
+            {
+                user.Email,
+                Roles = roles
+            });
         }
     }
 }

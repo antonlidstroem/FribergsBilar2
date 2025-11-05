@@ -39,6 +39,8 @@ namespace FribergsApi
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+            builder.Services.AddScoped<UserService>();
+
 
             // CORS
             builder.Services.AddCors(options =>
@@ -62,7 +64,7 @@ namespace FribergsApi
               .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-                    options.JsonSerializerOptions.PropertyNamingPolicy = null; 
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 });
 
 
