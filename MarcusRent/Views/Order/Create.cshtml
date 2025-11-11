@@ -1,0 +1,97 @@
+﻿@model Fribergs.Core.ViewModels.OrderViewModel
+
+@if (TempData["TempData"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["TempData"]
+    </div>
+}
+
+@{
+    var pricePerDayJs = Model.Price == 0m
+        ? (ViewBag.PricePerDay ?? 0m)
+        : Model.Price;
+
+    string pricePerDayStr = pricePerDayJs.ToString(System.Globalization.CultureInfo.InvariantCulture);
+}
+
+@{
+    var imageUrls = ViewBag.ImageUrls as List<string> ?? new List<string>();
+}
+
+<h1 class="page-title">HYR DIN BIL IDAG!</h1>
+<p class="page-subtitle">Hyra bil har aldrig varit enklare – eller roligare!</p>
+
+<div class="row mx-auto" style="max-width: 900px;">
+    @* BILDGALLERI *@
+    <div class="col-md-8">
+        @if (imageUrls.Any())
+        {
+            <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner rounded shadow" style="height: 350px; overflow: hidden;">
+                    @for (int i = 0; i < imageUrls.Count; i++)
+                    {
+                        var activeClass = i == 0 ? "active" : "";
+                        <div class="carousel-item @activeClass" style="height: 350px;">
+                            <img src="@imageUrls[i]" class="d-block w-100" style="object-fit: cover; height: 100%;" alt="Bild på bilen" />
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Föregående</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Nästa</span>
+                </button>
+            </div>
+        }
+        else
+        {
+            <span class="text-muted">Ingen bild tillgänglig</span>
+        }
+
+        @* BILPRESENTATION *@
+        <div class="p-3 bg-white rounded shadow-sm">
+            <p><strong>@ViewBag.CarInfo</strong> </p>
+
+
+            <p>@Model.CarDescription</p>
+            <p><strong>Pris per dag:</strong> @ViewBag.PricePerDay kr</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <form asp-action="Create" method="post" class="price-calculation-container p-4 rounded shadow-sm bg-light" style="min-height: 350px;"
+              data-price-per-day="@pricePerDayStr">
+            <input type="hidden" asp-for="CarId" />
+            <input type="hidden" asp-for="Brand" />
+            <input type="hidden" asp-for="Model" />
+            <input type="hidden" asp-for="CarDescription" />
+
+            <div class="mb-3">
+                <label asp-for="StartDate" class="form-label"></label>
+                <input asp-for="StartDate" class="form-control" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+                <small class="form-text text-muted">Välj startdatum för bokningen.</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="EndDate" class="form-label"></label>
+                <input asp-for="EndDate" class="form-control" type="date" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+                <small class="form-text text-muted">Välj slutdatum för bokningen.</small>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Beräknat totalpris</label>
+                <div class="price-output border rounded p-3 bg-white text-center fs-4 fw-bold" style="letter-spacing: 1px;">
+                </div>
+            </div>
+            <button type="submit" class="custom-btn">Boka nu!</button>
+        </form>
+    </div>
+</div>
+
+
