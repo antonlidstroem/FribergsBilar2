@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj" />
+    <ProjectReference Include="..\Fribergs.Core\Fribergs.Core.csproj" />
   </ItemGroup>
 
 </Project>
