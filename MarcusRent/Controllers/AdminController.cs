@@ -4,11 +4,11 @@ using MarcusRent.Models;
 using MarcusRent.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Linq;
 
 namespace MarcusRent.Controllers
 {
-    
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly ICarApiRepository _carRepository;
@@ -41,7 +41,7 @@ namespace MarcusRent.Controllers
             var orders = await _orderRepository.GetOrdersAsync();
             var users = await _userService.GetAllUsersAsync();
 
-            // Map Car -> AdminCarViewModel
+            // Mappa Car -> AdminCarViewModel
             var carViewModels = _mapper.Map<List<CarViewModel>>(cars);
 
             foreach (var carVM in carViewModels)
@@ -55,17 +55,18 @@ namespace MarcusRent.Controllers
                 carVM.CurrentCustomerName = activeRental?.UserId;
             }
 
-            // Map Order -> AdminOrderViewModel
+            // Mappa Order -> AdminOrderViewModel
             var orderViewModels = _mapper.Map<List<OrderViewModel>>(orders);
 
-            // Map ApplicationUser -> AdminCustomerViewModel
+            // Mappa ApplicationUser -> AdminCustomerViewModel
             var customerViewModels = _mapper.Map<List<CustomerViewModel>>(users);
 
+            // Skapa AdminDashboardViewModel
             var vm = new AdminDashboardViewModel
             {
                 Cars = carViewModels,
                 Orders = orderViewModels,
-                Customers = customerViewModels
+                Customers = customerViewModels  // Rätt syntax här
             };
 
             return View(vm);

@@ -75,7 +75,7 @@ namespace MarcusRent.Repositories
         public async Task<bool> UpdateUserAsync(UserDtoClient user)
         {
             AddJwtToken();
-            var response = await _httpClient.PutAsJsonAsync($"api/users/{user.Id}", user);
+            var response = await _httpClient.PutAsJsonAsync($"api/users/{user.UserId}", user);
             return response.IsSuccessStatusCode;
         }
 

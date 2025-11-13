@@ -72,6 +72,16 @@ namespace DAL.Repositories
                 .Where(o => o.UserId == userId)
                 .ToListAsync();
         }
+
+        public async Task<List<Order>> GetOrdersByCarIdAsync(int carId)
+        {
+            return await _context.Orders
+                .Include(o => o.Car)
+                .Include(o => o.Customer)
+                .Where(o => o.CarId == carId)
+                .ToListAsync();
+        }
+
     }
 }
 

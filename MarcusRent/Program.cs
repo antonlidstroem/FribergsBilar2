@@ -16,11 +16,12 @@ namespace MarcusRent
             // Lägg till IHttpContextAccessor för att komma åt sessionen
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            // Lägg till en service för att hantera JWT-token
-            builder.Services.AddScoped<IAuthService, AuthService>();
-
             //Http-klienter
-         
+            builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7251/");
+            });
+
             builder.Services.AddHttpClient<ICarApiRepository, CarApiRepository>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:7251/");
@@ -58,9 +59,9 @@ namespace MarcusRent
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSession(); 
+            app.UseSession();
             app.UseRouting();
-           
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllerRoute(

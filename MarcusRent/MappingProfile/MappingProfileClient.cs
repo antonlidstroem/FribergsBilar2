@@ -1,8 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
+using DAL.Classes;
 using Fribergs.Core.ViewModels;
 using FribergsApi.Models;
 using MarcusRent.Models;
-using System.Linq;
 
 namespace MarcusRent.MappingProfile
 {
@@ -38,7 +39,7 @@ namespace MarcusRent.MappingProfile
             // User mapping
             // -------------------------
             CreateMap<ApplicationUserDto, UserDtoClient>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Roles, opt => opt.Ignore());
 
@@ -87,6 +88,11 @@ namespace MarcusRent.MappingProfile
                 .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))
                 .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.CarDescription));
 
+            CreateMap<ApplicationUser, CustomerViewModel>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.ApprovedByAdmin, opt => opt.MapFrom(src => src.ApprovedByAdmin));  // Om du har en sådan property i ApplicationUser
 
 
         }

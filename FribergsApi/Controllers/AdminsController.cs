@@ -1,76 +1,101 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using DAL.Classes;
 using DAL.Repositories;
 using Fribergs.Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace MarcusRent.Api.Controllers
 {
-    [Route("api/admins")]
     [ApiController]
-    [Authorize(Roles = "Admin")] 
+    [Route("api/admins")]
+    [Authorize(Roles = "Admin")]
     public class AdminsController : ControllerBase
     {
         private readonly ICarRepository _carRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IApplicationUserRepository _userService;
         private readonly IMapper _mapper;
+        private readonly ILogger<AdminsController> _logger;
 
         public AdminsController(
             ICarRepository carRepository,
             IOrderRepository orderRepository,
             IApplicationUserRepository userService,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<AdminsController> logger)
         {
             _carRepository = carRepository;
             _orderRepository = orderRepository;
             _userService = userService;
             _mapper = mapper;
+            _logger = logger;
         }
 
-        #region Cars (CRUD)
+        #region Cars
 
-        // GET api/admins/cars
         [HttpGet("cars")]
-        public async Task<IActionResult> GetCars()
+        public async Task<IActionResult> GetCarsAsync()
         {
-            var cars = await _carRepository.GetAllAsync();
-            var carViewModels = _mapper.Map<List<CarViewModel>>(cars);
-            return Ok(carViewModels);
+            try
+            {
+                var cars = await _carRepository.GetAllAsync();
+                if (cars == null || !cars.Any()) return NotFound("No cars found.");
+
+                var carVms = _mapper.Map<List<CarViewModel>>(cars);
+
+                foreach (var carVm in carVms)
+                {
+                    carVm.TotalEarnings = await _orderRepository.GetTotalEarningsForCarAsync(carVm.CarId);
+
+                    var currentRental = (await _orderRepository.GetOrdersByCarIdAsync(carVm.CarId))
+                    .FirstOrDefault(o => o.EndDate >= DateTime.Today);
+                    if (currentRental != null)
+                    {
+                        carVm.CurrentRentalEndDate = currentRental.EndDate;
+                        carVm.CurrentCustomerName = currentRental.Customer?.FullName;  
+                        carVm.Available = false;
+                    }
+
+                }
+
+                return Ok(carVms);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching cars for admin");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
-        // POST api/admins/cars
         [HttpPost("cars")]
-        public async Task<IActionResult> CreateCar([FromBody] CarViewModel carViewModel)
+        public async Task<IActionResult> CreateCarAsync([FromBody] CarViewModel carVm)
         {
-            if (carViewModel == null) return BadRequest("Car data is missing.");
-
-            var car = _mapper.Map<Car>(carViewModel);
+            if (carVm == null) return BadRequest("Car data is missing.");
+            var car = _mapper.Map<Car>(carVm);
             await _carRepository.AddAsync(car);
-            return CreatedAtAction(nameof(GetCars), new { id = car.CarId }, car);
+            return CreatedAtAction(nameof(GetCarsAsync), new { id = car.CarId }, car);
         }
 
-        // PUT api/admins/cars/{id}
         [HttpPut("cars/{id}")]
-        public async Task<IActionResult> UpdateCar(int id, [FromBody] CarViewModel carViewModel)
+        public async Task<IActionResult> UpdateCarAsync(int id, [FromBody] CarViewModel carVm)
         {
-            if (carViewModel == null || id != carViewModel.CarId)
-                return BadRequest("Car data is invalid.");
-
-            var car = _mapper.Map<Car>(carViewModel);
+            if (carVm == null || id != carVm.CarId) return BadRequest("Invalid car data.");
+            var car = _mapper.Map<Car>(carVm);
             await _carRepository.UpdateAsync(car);
             return NoContent();
         }
 
-        // DELETE api/admins/cars/{id}
         [HttpDelete("cars/{id}")]
-        public async Task<IActionResult> DeleteCar(int id)
+        public async Task<IActionResult> DeleteCarAsync(int id)
         {
             var car = await _carRepository.GetByIdAsync(id);
             if (car == null) return NotFound("Car not found.");
-
             await _carRepository.DeleteAsync(id);
             return Ok(new { message = "Car deleted successfully." });
         }
@@ -79,48 +104,80 @@ namespace MarcusRent.Api.Controllers
 
         #region Orders
 
-        // GET api/admins/orders
         [HttpGet("orders")]
-        public async Task<IActionResult> GetOrders()
+        public async Task<IActionResult> GetOrdersAsync()
         {
-            var orders = await _orderRepository.GetAllOrdersAsync();
-            var orderViewModels = _mapper.Map<List<OrderViewModel>>(orders);
-            return Ok(orderViewModels);
+            try
+            {
+                var orders = await _orderRepository.GetAllOrdersAsync();
+                var orderVms = _mapper.Map<List<OrderViewModel>>(orders);
+                return Ok(orderVms);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching orders for admin");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet("orders/{id}")]
+        public async Task<IActionResult> GetOrderByIdAsync(int id)
+        {
+            var order = await _orderRepository.GetOrderByIdAsync(id);
+            if (order == null) return NotFound("Order not found.");
+            var orderVm = _mapper.Map<OrderViewModel>(order);
+            return Ok(orderVm);
         }
 
         #endregion
 
         #region Users (Customers)
 
-        // GET api/admins/users
         [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsersAsync()
         {
             var users = await _userService.GetAllUsersAsync();
-            var customerViewModels = _mapper.Map<List<CustomerViewModel>>(users);
-            return Ok(customerViewModels);
+            if (users == null || !users.Any()) return NotFound("No users found.");
+            var userVms = _mapper.Map<List<CustomerViewModel>>(users);
+            return Ok(userVms);
         }
 
-        // POST api/admins/users/approve/{userId}
-        [HttpPost("users/approve/{userId}")]
-        public async Task<IActionResult> ApproveUser(string userId)
+        [HttpGet("users/{id}")]
+        public async Task<IActionResult> GetUserByIdAsync(string id)
         {
-            var user = await _userService.GetUserByIdAsync(userId);
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null) return NotFound("User not found.");
+            var userVm = _mapper.Map<CustomerViewModel>(user);
+            return Ok(userVm);
+        }
+
+        [HttpPost("users/approve/{id}")]
+        public async Task<IActionResult> ApproveUserAsync(string id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
             if (user == null) return NotFound("User not found.");
 
             user.ApprovedByAdmin = true;
             await _userService.UpdateUserAsync(user);
+
             return Ok(new { message = "User approved successfully." });
         }
 
-        // DELETE api/admins/users/{userId}
-        [HttpDelete("users/{userId}")]
-        public async Task<IActionResult> DeleteUser(string userId)
+        [HttpPut("users/{id}")]
+        public async Task<IActionResult> UpdateUserAsync(string id, [FromBody] CustomerViewModel userVm)
         {
-            var user = await _userService.GetUserByIdAsync(userId);
-            if (user == null) return NotFound("User not found.");
+            if (userVm == null || id != userVm.UserId) return BadRequest("Invalid user data.");
+            var user = _mapper.Map<ApplicationUser>(userVm);
+            await _userService.UpdateUserAsync(user);
+            return NoContent();
+        }
 
-            await _userService.DeleteUserAsync(userId);
+        [HttpDelete("users/{id}")]
+        public async Task<IActionResult> DeleteUserAsync(string id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null) return NotFound("User not found.");
+            await _userService.DeleteUserAsync(id);
             return Ok(new { message = "User deleted successfully." });
         }
 

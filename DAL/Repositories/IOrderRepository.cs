@@ -17,6 +17,7 @@ namespace DAL.Repositories
 
         Task<decimal> GetTotalEarningsForCarAsync(int id);
         Task<List<Order>> GetOrdersByUserIdAsync(string userId);
+        Task<List<Order>> GetOrdersByCarIdAsync(int carId);
 
     }
 }
