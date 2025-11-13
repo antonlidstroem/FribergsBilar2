@@ -20,7 +20,8 @@ namespace MarcusRent.Controllers
         private readonly ICarApiRepository _carRepository;
         private readonly IAuthService _authService;
 
-        public OrderController(IMapper mapper, IOrderApiRepository orderRepository, ICarApiRepository carRepository, IAuthService authService)
+        public OrderController(IMapper mapper, IOrderApiRepository orderRepository, 
+            ICarApiRepository carRepository, IAuthService authService)
         {
             _mapper = mapper;
             _orderRepository = orderRepository;

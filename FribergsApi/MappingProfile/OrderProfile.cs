@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FribergsApi.Models;
 
-namespace FribergsApi.MappingProfile
+namespace MarcusRent.MappingProfile
 {
     public class OrderProfile : Profile
     {
