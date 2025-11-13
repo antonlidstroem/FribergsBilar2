@@ -40,7 +40,7 @@ namespace MarcusRent.Controllers
                 return View(model);
             }
 
-            var token = _authService.GetJwtTokenFromSession();
+            var token = _authService.GetJwtToken();
             HttpContext.Session.SetString("jwtToken", token);
             HttpContext.Session.SetString("userName", model.Email);
 

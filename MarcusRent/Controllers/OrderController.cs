@@ -233,7 +233,7 @@ namespace MarcusRent.Controllers
 
         private string GetUserIdFromToken()
         {
-            var token = _authService.GetJwtTokenFromSession();
+            var token = _authService.GetJwtToken();
             if (string.IsNullOrEmpty(token)) return null;
 
             var handler = new JwtSecurityTokenHandler();

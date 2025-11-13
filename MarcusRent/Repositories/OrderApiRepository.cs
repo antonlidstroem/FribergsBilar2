@@ -16,15 +16,7 @@ namespace MarcusRent.Repositories
             _authService = authService;
         }
 
-        private void AddJwtToken()
-        {
-            var token = _authService.GetJwtTokenFromSession();
-            _httpClient.DefaultRequestHeaders.Authorization =
-                !string.IsNullOrEmpty(token)
-                    ? new AuthenticationHeaderValue("Bearer", token)
-                    : null;
-        }
-
+       
         // GET all orders
         public async Task<List<OrderDtoClient>> GetOrdersAsync()
         {
@@ -84,6 +76,10 @@ namespace MarcusRent.Repositories
             AddJwtToken();
             var response = await _httpClient.GetFromJsonAsync<decimal>($"api/orders/totalEarnings/{carId}");
             return response;
+        }
+        private void AddJwtToken()
+        {
+            _authService.AddJwtToken();
         }
     }
 }

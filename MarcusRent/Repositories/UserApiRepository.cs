@@ -15,14 +15,7 @@ namespace MarcusRent.Repositories
             _authService = authService;
         }
 
-        private void AddJwtToken()
-        {
-            var token = _authService.GetJwtTokenFromSession();
-            _httpClient.DefaultRequestHeaders.Authorization =
-                !string.IsNullOrEmpty(token)
-                    ? new AuthenticationHeaderValue("Bearer", token)
-                    : null;
-        }
+        
 
         public async Task<MeResponseClient?> GetMeAsync()
         {
@@ -86,6 +79,11 @@ namespace MarcusRent.Repositories
             if (!response.IsSuccessStatusCode) return null;
 
             return await response.Content.ReadFromJsonAsync<CurrentUserDto>();
+        }
+
+        private void AddJwtToken()
+        {
+            _authService.AddJwtToken();
         }
 
     }

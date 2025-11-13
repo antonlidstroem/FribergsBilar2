@@ -1,5 +1,6 @@
 ﻿namespace MarcusRent.Repositories
 {
+    using System.Net.Http.Headers;
     using FribergsApi.Models;
     using Microsoft.AspNetCore.Http;
 
@@ -49,12 +50,24 @@
             session.Remove("userId");
         }
 
-        public string GetJwtTokenFromSession()
+
+        public void AddJwtToken()
         {
-            return _contextAccessor.HttpContext?.Session?.GetString("jwtToken");
+            var token = _contextAccessor.HttpContext?.Session?.GetString("jwtToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization 
+                    = new AuthenticationHeaderValue("Bearer", token);
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }     
         }
 
-
+        public string GetJwtToken()
+        {
+            return _contextAccessor.HttpContext?.Session?.GetString("jwtToken") ?? string.Empty;
+        }
     }
-
 }
