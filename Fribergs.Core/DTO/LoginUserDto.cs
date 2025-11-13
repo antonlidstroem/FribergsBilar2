@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MarcusRent.Models
+namespace Fribergs.Core.Models
 {
-    public class LoginUserDtoClient
+    public class LoginUserDto
     {
         [Required]
         [EmailAddress]

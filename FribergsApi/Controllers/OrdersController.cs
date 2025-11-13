@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using AutoMapper;
 using DAL.Repositories;
+using Fribergs.Core.Models;
 using FribergsApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,17 +1,20 @@
-﻿using MarcusRent.Models;
+﻿
 
+
+using Fribergs.Core.Models;
+using FribergsApi.Models;
 
 namespace MarcusRent.Repositories
 {
     public interface IUserApiRepository
     {
-        Task<MeResponseClient?> GetMeAsync();
-        Task<MeResponseClient?> GetMeAsync(string token);
-        Task<UserDtoClient?> GetUserByIdAsync(string id);
-        Task<List<UserDtoClient>> GetAllUsersAsync();
+        //Task<MeResponse?> GetMeAsync();
+        //Task<MeResponse?> GetMeAsync(string token);
+        Task<UserDto?> GetUserByIdAsync(string id);
+        Task<List<UserDto>> GetAllUsersAsync();
         Task ApproveUserAsync(string id);
 
-        Task<bool> UpdateUserAsync(UserDtoClient user);
+        Task<bool> UpdateUserAsync(UserDto user);
         Task<bool> DeleteUserAsync(string id);
         Task<CurrentUserDto> GetCurrentUserAsync();
 

@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using MarcusRent.Models;
+using Fribergs.Core.Models;
+using FribergsApi.Models;
+
 
 namespace MarcusRent.Repositories
 {
@@ -15,12 +17,12 @@ namespace MarcusRent.Repositories
             _authService = authService;
         }
 
-        
+
 
         public async Task<MeResponseClient?> GetMeAsync()
         {
             AddJwtToken();
-            return await _httpClient.GetFromJsonAsync<Models.MeResponseClient>("api/auth/me");
+            return await _httpClient.GetFromJsonAsync<Fribergs.Core.Models.MeResponseClient>("api/auth/me");
         }
 
         public async Task<MeResponseClient?> GetMeAsync(string token)
@@ -30,23 +32,23 @@ namespace MarcusRent.Repositories
                     ? new AuthenticationHeaderValue("Bearer", token)
                     : null;
 
-            return await _httpClient.GetFromJsonAsync<Models.MeResponseClient>("api/auth/me");
+            return await _httpClient.GetFromJsonAsync<Fribergs.Core.Models.MeResponseClient>("api/auth/me");
         }
 
-        public async Task<UserDtoClient?> GetUserByIdAsync(string id)
+        public async Task<UserDto?> GetUserByIdAsync(string id)
         {
             AddJwtToken();
             var response = await _httpClient.GetAsync($"api/users/{id}");
             if (!response.IsSuccessStatusCode) return null;
 
-            return await response.Content.ReadFromJsonAsync<UserDtoClient>();
+            return await response.Content.ReadFromJsonAsync<UserDto>();
         }
 
-        public async Task<List<UserDtoClient>> GetAllUsersAsync()
+        public async Task<List<UserDto>> GetAllUsersAsync()
         {
             AddJwtToken();
-            var response = await _httpClient.GetFromJsonAsync<List<UserDtoClient>>("api/users");
-            return response ?? new List<UserDtoClient>();
+            var response = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/users");
+            return response ?? new List<UserDto>();
         }
 
         public async Task ApproveUserAsync(string id)
@@ -57,7 +59,7 @@ namespace MarcusRent.Repositories
                 throw new Exception("Could not approve user");
         }
 
-       
+
         public async Task<bool> DeleteUserAsync(string id)
         {
             AddJwtToken();
@@ -65,7 +67,7 @@ namespace MarcusRent.Repositories
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> UpdateUserAsync(UserDtoClient user)
+        public async Task<bool> UpdateUserAsync(UserDto user)
         {
             AddJwtToken();
             var response = await _httpClient.PutAsJsonAsync($"api/users/{user.UserId}", user);
@@ -86,5 +88,7 @@ namespace MarcusRent.Repositories
             _authService.AddJwtToken();
         }
 
+
     }
 }
+

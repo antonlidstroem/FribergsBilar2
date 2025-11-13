@@ -1,4 +1,4 @@
-﻿namespace MarcusRent.Models
+﻿namespace Fribergs.Core.Models
 {
     public class AuthResponse
     {

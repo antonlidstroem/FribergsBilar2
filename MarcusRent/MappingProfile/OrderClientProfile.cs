@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Fribergs.Core.Models;
 using Fribergs.Core.ViewModels;
-using MarcusRent.Models;
 
 
 namespace MarcusRent.MappingProfile
@@ -9,7 +9,7 @@ namespace MarcusRent.MappingProfile
     {
         public OrderClientProfile()
         {
-            CreateMap<OrderDtoClient, OrderViewModel>().ReverseMap();
+            CreateMap<OrderDto, OrderViewModel>().ReverseMap();
         }
     }
 

@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace FribergsApi.Models
+namespace Fribergs.Core.Models
 {
     public class OrderDto
     {

@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using MarcusRent.Models;
+using Fribergs.Core.Models;
+
 
 namespace MarcusRent.Repositories
 {
@@ -16,32 +17,32 @@ namespace MarcusRent.Repositories
         }
 
         // GET all cars
-        public async Task<List<CarDtoClient>> GetCarsAsync()
+        public async Task<List<CarDto>> GetCarsAsync()
         {
             AddJwtToken();
-            var response = await _httpClient.GetFromJsonAsync<List<CarDtoClient>>("api/cars");
-            return response ?? new List<CarDtoClient>();
+            var response = await _httpClient.GetFromJsonAsync<List<CarDto>>("api/cars");
+            return response ?? new List<CarDto>();
         }
 
         // GET single car
-        public async Task<CarDtoClient?> GetCarByIdAsync(int id)
+        public async Task<CarDto?> GetCarByIdAsync(int id)
         {
             AddJwtToken();
-            return await _httpClient.GetFromJsonAsync<CarDtoClient>($"api/cars/{id}");
+            return await _httpClient.GetFromJsonAsync<CarDto>($"api/cars/{id}");
         }
 
         // POST new car
-        public async Task<CarDtoClient?> CreateCarAsync(CarDtoClient car)
+        public async Task<CarDto?> CreateCarAsync(CarDto car)
         {
             AddJwtToken();
             var response = await _httpClient.PostAsJsonAsync("api/cars", car);
             if (!response.IsSuccessStatusCode) return null;
 
-            return await response.Content.ReadFromJsonAsync<CarDtoClient>();
+            return await response.Content.ReadFromJsonAsync<CarDto>();
         }
 
         // PUT update car
-        public async Task<bool> UpdateCarAsync(CarDtoClient car)
+        public async Task<bool> UpdateCarAsync(CarDto car)
         {
             AddJwtToken();
             var response = await _httpClient.PutAsJsonAsync($"api/cars/{car.CarId}", car);
@@ -60,5 +61,7 @@ namespace MarcusRent.Repositories
         {
             _authService.AddJwtToken();
         }
+
+        
     }
 }

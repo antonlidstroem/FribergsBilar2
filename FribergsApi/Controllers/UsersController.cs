@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FribergsApi.Models;  // Eller använd din egna modeller för användare
-using DAL.Repositories;    // Om du har en repository som hanterar användare
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FribergsApi.Models;
+using DAL.Repositories;
+using Fribergs.Core.Models;
 
-namespace FribergsApi.Controllers
+namespace MarcusRent.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IApplicationUserRepository _userRepository;
 
-        // Konstruktor: Injicera din repository för att hämta användardata
+        // Konstruktor för att injicera beroenden
         public UsersController(IApplicationUserRepository userRepository)
         {
             _userRepository = userRepository;
@@ -20,29 +23,60 @@ namespace FribergsApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ApplicationUserDto>>> GetAllUsers()
         {
-            var users = await _userRepository.GetAllUsersAsync(); // Anpassa beroende på din repo-logik
-            if (users == null || !users.Any())
+            var users = await _userRepository.GetAllUsersAsync();
+            if (users == null || users.Count == 0)
             {
-                return NotFound();
+                return NotFound("Inga användare hittades.");
             }
-
             return Ok(users);
         }
 
-        // Eventuellt en metod för att hämta en specifik användare
         // GET: api/users/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<ApplicationUserDto>> GetUserById(string id)
         {
-            var user = await _userRepository.GetUserByIdAsync(id);  // Anpassa för din repo-logik
+            var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null)
             {
-                return NotFound();
+                return NotFound($"Användare med ID {id} hittades inte.");
             }
-
             return Ok(user);
         }
 
-        // Här kan du lägga till fler metoder för att skapa, uppdatera och ta bort användare om det behövs.
+        // POST: api/users/{id}/approve
+        [HttpPost("{id}/approve")]
+        public async Task<ActionResult> ApproveUser(string id)
+        {
+            await _userRepository.ApproveUserAsync(id);
+            return Ok();
+        }
+
+        // PUT: api/users/{id}
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateUser(string id, [FromBody] ApplicationUserDto user)
+        {
+            if (id != user.Id)
+            {
+                return BadRequest("User ID mismatch.");
+            }
+
+            var success = await _userRepository.UpdateUserAsync(user);
+            if (success)
+            {
+                return Ok($"Användaren {id} uppdaterades.");
+            }
+
+            return NotFound("Användaren kunde inte uppdateras.");
+        }
+
+        // DELETE: api/users/{id}
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteUser(string id)
+        {
+            await _userRepository.DeleteUserAsync(id);
+            
+                return Ok($"Användaren {id} har tagits bort.");
+           
+        }
     }
 }

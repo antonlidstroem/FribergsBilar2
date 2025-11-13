@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MarcusRent.Repositories;
-using MarcusRent.Models;
+using Fribergs.Core.Models;
+
 
 namespace MarcusRent.Controllers
 {
@@ -21,11 +22,11 @@ namespace MarcusRent.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            return View(new LoginUserDtoClient());
+            return View(new LoginUserDto());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginUserDtoClient model)
+        public async Task<IActionResult> Login(LoginUserDto model)
         {
             if (!ModelState.IsValid)
                 return View(model);

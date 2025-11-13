@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
+using FribergsApi.Models;
 
-namespace FribergsApi.Models
+namespace Fribergs.Core.Models
 {
     public class CarImageResponse
     {

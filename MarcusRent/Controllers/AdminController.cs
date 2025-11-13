@@ -31,10 +31,9 @@ namespace MarcusRent.Controllers
             _authService = authService;
         }
 
-        
+
         public async Task<IActionResult> Index()
         {
-
             var userId = GetUserIdFromToken();
             if (string.IsNullOrEmpty(userId))
             {
@@ -47,7 +46,6 @@ namespace MarcusRent.Controllers
             var orders = await _orderRepository.GetOrdersAsync();
             var users = await _userService.GetAllUsersAsync();
 
-            
             if (users == null)
             {
 
@@ -57,9 +55,10 @@ namespace MarcusRent.Controllers
             {
                 Console.WriteLine($"Typ av users: {users.FirstOrDefault()?.GetType().Name}");
             }
-
-
-
+           
+            // Mappa Order -> AdminOrderViewModel
+            var orderViewModels = _mapper.Map<List<OrderViewModel>>(orders);
+            var customerViewModels = _mapper.Map<List<CustomerViewModel>>(users);
             var carViewModels = _mapper.Map<List<CarViewModel>>(cars);
 
             foreach (var carVM in carViewModels)
@@ -73,11 +72,10 @@ namespace MarcusRent.Controllers
                 carVM.CurrentCustomerName = activeRental?.UserId;
             }
 
-            // Mappa Order -> AdminOrderViewModel
-            var orderViewModels = _mapper.Map<List<OrderViewModel>>(orders);
+            
 
-            // Mappa ApplicationUser -> AdminCustomerViewModel
-            var customerViewModels = _mapper.Map<List<CustomerViewModel>>(users);
+            
+
 
             // Skapa AdminDashboardViewModel
             var vm = new AdminDashboardViewModel
@@ -89,46 +87,6 @@ namespace MarcusRent.Controllers
 
             return View(vm);
 
-            //var currentUser = await _userService.GetCurrentUserAsync();
-            //if (currentUser == null || !currentUser.Roles.Contains("Admin"))
-            //{
-            //    return RedirectToAction("Index", "Home");
-            //}
-
-            //TempData["CarId"] = null;
-            //var cars = await _carRepository.GetCarsAsync();
-            //var orders = await _orderRepository.GetOrdersAsync();
-            //var users = await _userService.GetAllUsersAsync();
-
-            //// Mappa Car -> AdminCarViewModel
-            //var carViewModels = _mapper.Map<List<CarViewModel>>(cars);
-
-            //foreach (var carVM in carViewModels)
-            //{
-            //    var earnings = await _orderRepository.GetTotalEarningsForCarAsync(carVM.CarId);
-            //    var activeRental = orders
-            //        .FirstOrDefault(o => o.CarId == carVM.CarId && o.EndDate > DateTime.Now);
-
-            //    carVM.TotalEarnings = earnings;
-            //    carVM.CurrentRentalEndDate = activeRental?.EndDate;
-            //    carVM.CurrentCustomerName = activeRental?.UserId;
-            //}
-
-            //// Mappa Order -> AdminOrderViewModel
-            //var orderViewModels = _mapper.Map<List<OrderViewModel>>(orders);
-
-            //// Mappa ApplicationUser -> AdminCustomerViewModel
-            //var customerViewModels = _mapper.Map<List<CustomerViewModel>>(users);
-
-            //// Skapa AdminDashboardViewModel
-            //var vm = new AdminDashboardViewModel
-            //{
-            //    Cars = carViewModels,
-            //    Orders = orderViewModels,
-            //    Customers = customerViewModels  // Rätt syntax här
-            //};
-
-            //return View(vm);
         }
 
         [HttpPost]

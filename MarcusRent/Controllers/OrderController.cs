@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MarcusRent.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using MarcusRent.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 using Fribergs.Core.ViewModels;
+using Fribergs.Core.Models;
 
 namespace MarcusRent.Controllers
 {
@@ -110,7 +110,7 @@ namespace MarcusRent.Controllers
 
             // Beräkna pris och skapa order
             var days = CountDaysDifference(viewModel);
-            var order = _mapper.Map<OrderDtoClient>(viewModel);
+            var order = _mapper.Map<OrderDto>(viewModel);
             order.UserId = userId;
             order.Price = days * car.PricePerDay;
 
