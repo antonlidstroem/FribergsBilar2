@@ -1,7 +1,8 @@
 ﻿using System.Globalization;
 using AutoMapper;
 using DAL.Repositories;
-using FribergsApi.Models;
+using Fribergs.Core.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarcusRent.Api.Controllers
@@ -28,6 +29,7 @@ namespace MarcusRent.Api.Controllers
         }
 
         // GET: api/orders/{id}
+        //[Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderDto>> GetOrderById(int id)
         {

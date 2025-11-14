@@ -1,15 +1,16 @@
 ﻿using DAL.Classes;
-using MarcusRent.Models;
+using Fribergs.Core.DTO;
+
 
 namespace MarcusRent.Repositories
 {
     public interface IOrderApiRepository
     {
-        Task<OrderDtoClient?> GetOrderByIdAsync(int id);
-        Task<List<OrderDtoClient>> GetOrdersAsync();
-        Task<List<OrderDtoClient>> GetOrdersByUserIdAsync(string userId);
-        Task AddOrderAsync(OrderDtoClient order);
-        Task UpdateOrderAsync(OrderDtoClient order);
+        Task<OrderDto?> GetOrderByIdAsync(int id);
+        Task<List<OrderDto>> GetOrdersAsync();
+        Task<List<OrderDto>> GetOrdersByUserIdAsync(string userId);
+        Task AddOrderAsync(OrderDto order);
+        Task UpdateOrderAsync(OrderDto order);
         Task DeleteOrderAsync(int id);
         Task<bool> IsCarBookedAsync(int carId, DateTime startDate, DateTime endDate);
         Task<decimal> GetTotalEarningsForCarAsync(int carId);

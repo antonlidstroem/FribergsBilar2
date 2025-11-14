@@ -9,7 +9,7 @@ namespace DAL.Repositories
         Task<ApplicationUser?> GetUserByIdAsync(string id);
         Task ApproveUserAsync(string id);
         Task DeleteUserAsync(string id);
-        Task UpdateUserAsync(ApplicationUser user);
+        Task<bool> UpdateUserAsync(ApplicationUser user);
         Task<ApplicationUser?> AddAsync(string firstName, string lastName, string email, string password, string role);
     }
 }

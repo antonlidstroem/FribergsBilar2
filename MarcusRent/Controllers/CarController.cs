@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using MarcusRent.Models;
 using AutoMapper;
 using MarcusRent.Repositories;
 using Fribergs.Core.ViewModels;

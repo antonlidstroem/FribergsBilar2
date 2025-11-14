@@ -1,4 +1,4 @@
-﻿namespace MarcusRent.Models
+﻿namespace Fribergs.Core.DTO
 {
     public class CurrentUserDto
     {

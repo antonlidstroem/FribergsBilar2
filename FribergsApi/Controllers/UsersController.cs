@@ -1,48 +1,105 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FribergsApi.Models;  // Eller använd din egna modeller för användare
-using DAL.Repositories;    // Om du har en repository som hanterar användare
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using DAL.Repositories;
+using DAL.Classes;
+using AutoMapper;
+using Fribergs.Core.DTO;
 
-namespace FribergsApi.Controllers
+namespace MarcusRent.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IApplicationUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        // Konstruktor: Injicera din repository för att hämta användardata
-        public UsersController(IApplicationUserRepository userRepository)
+        // Konstruktor för att injicera beroenden
+        public UsersController(IApplicationUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         // GET: api/users
         [HttpGet]
-        public async Task<ActionResult<List<ApplicationUserDto>>> GetAllUsers()
+        public async Task<ActionResult<List<UserDto>>> GetAllUsers()
         {
-            var users = await _userRepository.GetAllUsersAsync(); // Anpassa beroende på din repo-logik
-            if (users == null || !users.Any())
+            var users = await _userRepository.GetAllUsersAsync();
+            if (users == null || users.Count == 0)
             {
-                return NotFound();
+                return NotFound("Inga användare hittades.");
             }
-
             return Ok(users);
         }
 
-        // Eventuellt en metod för att hämta en specifik användare
         // GET: api/users/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApplicationUserDto>> GetUserById(string id)
+        public async Task<ActionResult<UserDto>> GetUserById(string id)
         {
-            var user = await _userRepository.GetUserByIdAsync(id);  // Anpassa för din repo-logik
+            var user = await _userRepository.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound($"Användare med ID {id} hittades inte.");
+            }
+            return Ok(user);
+        }
+
+        // POST: api/users/{id}/approve
+        [HttpPost("{id}/approve")]
+        public async Task<ActionResult> ApproveUser(string id)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound($"Användare med ID {id} hittades inte.");
+            }
+
+            await _userRepository.ApproveUserAsync(id);
+            return Ok($"Användaren med ID {id} har blivit godkänd.");
+        }
+
+
+        // PUT: api/users/{id}
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateUser(string id, [FromBody] UserDto userDto)
+        {
+            var user = await _userRepository.GetUserByIdAsync (id);
+            
             if (user == null)
             {
                 return NotFound();
             }
 
-            return Ok(user);
+            
+            _mapper.Map(userDto, user);
+
+            // Uppdatera användaren
+            var success = await _userRepository.UpdateUserAsync(user);
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            
+            return NotFound("Användaren har uppdateras.");
         }
 
-        // Här kan du lägga till fler metoder för att skapa, uppdatera och ta bort användare om det behövs.
+
+        // DELETE: api/users/{id}
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteUser(string id)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound($"Användare med ID {id} hittades inte.");
+            }
+
+            await _userRepository.DeleteUserAsync(id);
+            return Ok($"Användaren med ID {id} har tagits bort.");
+        }
+
     }
 }

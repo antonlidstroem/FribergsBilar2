@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using DAL.Classes;
 using DAL.Repositories;
-using FribergsApi.MappingProfile;
+using FribergsApi.MappingProfiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -33,7 +33,10 @@ namespace FribergsApi
 
             // AutoMapper
             builder.Services.AddAutoMapper(cfg =>
-            { }, typeof(CarProfile));
+            { }, typeof(MappingProfile));
+
+            
+
 
             // DAL-repositories
             builder.Services.AddScoped<ICarRepository, CarRepository>();

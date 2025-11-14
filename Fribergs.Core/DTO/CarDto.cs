@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Fribergs.Core.DTO;
 
-namespace MarcusRent.Models
+
+namespace Fribergs.Core.DTO
+
 {
-    public class CarDtoClient
+    public class CarDto
     {
         public int CarId { get; set; }
         public string Brand { get; set; }
@@ -15,10 +18,10 @@ namespace MarcusRent.Models
 
         
         [JsonPropertyName("carImages")]
-        public CarImageResponseClient CarImagesResponse { get; set; } = new CarImageResponseClient();
+        public CarImageResponse CarImagesResponse { get; set; } = new CarImageResponse();
 
         [JsonIgnore]
-        public List<CarImageDtoClient> CarImages => CarImagesResponse?.Values ?? new List<CarImageDtoClient>();
+        public List<CarImageDto> CarImages => CarImagesResponse?.Values ?? new List<CarImageDto>();
     }
 
 

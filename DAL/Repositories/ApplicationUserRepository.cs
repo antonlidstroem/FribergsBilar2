@@ -76,10 +76,31 @@ namespace DAL.Repositories
                 await _userManager.DeleteAsync(user);
             }
         }
-        public async Task UpdateUserAsync(ApplicationUser user)
+        //public async Task UpdateUserAsync(ApplicationUser user)
+        //{
+        //    await _userManager.UpdateAsync(user);
+        //}
+
+        public async Task<bool> UpdateUserAsync(ApplicationUser user)
         {
-            await _userManager.UpdateAsync(user);
+            var existingUser = await _userManager.FindByIdAsync(user.Id);
+            if (existingUser == null)
+            {
+                return false; // Om användaren inte finns
+            }
+
+            // Uppdatera användarens fält
+            existingUser.FirstName = user.FirstName;
+            existingUser.LastName = user.LastName;
+            existingUser.Email = user.Email;
+            existingUser.ApprovedByAdmin = user.ApprovedByAdmin;
+
+            // Sätt andra fält om det behövs
+
+            var result = await _userManager.UpdateAsync(existingUser);
+            return result.Succeeded;
         }
+
     }
 
 }

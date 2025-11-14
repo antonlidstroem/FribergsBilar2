@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Fribergs.Core.ViewModels;
-using MarcusRent.Models;
 using MarcusRent.Repositories;
 using Microsoft.AspNetCore.Mvc;
 

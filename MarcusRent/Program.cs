@@ -1,8 +1,9 @@
 using System.Net.Http.Headers;
-using MarcusRent.MappingProfile;
 using MarcusRent.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using FribergsApi.MappingProfiles;
 
 
 namespace MarcusRent
@@ -37,11 +38,11 @@ namespace MarcusRent
                 client.BaseAddress = new Uri("https://localhost:7251/");
             });
 
-            builder.Services.AddAutoMapper(cfg =>
-            {
-                cfg.AddProfile<MappingProfileClient>();
-                cfg.AddProfile<OrderClientProfile>();
-            });
+            builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));  
+
+
+
+
 
 
             builder.Services.AddControllersWithViews();
