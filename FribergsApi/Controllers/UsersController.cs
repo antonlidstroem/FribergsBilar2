@@ -65,23 +65,25 @@ namespace MarcusRent.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateUser(string id, [FromBody] ApplicationUserDto applicationUserDto)
         {
-            if (id != applicationUserDto.Id)
+            var user = await _userRepository.GetUserByIdAsync (id);
+            
+            if (user == null)
             {
-                return BadRequest($"ID mismatch: URL-id ({id}) matchar inte ID i data ({applicationUserDto.Id}).");
+                return NotFound();
             }
 
-            // Använd AutoMapper för att mappa ApplicationUserDto till ApplicationUser
-            var user = _mapper.Map<ApplicationUser>(applicationUserDto);
+            
+            _mapper.Map(applicationUserDto, user);
 
             // Uppdatera användaren
             var success = await _userRepository.UpdateUserAsync(user);
-            if (success)
+            if (!success)
             {
-                return Ok($"Användaren med ID {id} har uppdaterats.");
+                return NotFound();
             }
 
-            // Om uppdateringen inte lyckades, returnera NotFound
-            return NotFound("Användaren kunde inte uppdateras.");
+            
+            return NotFound("Användaren har uppdateras.");
         }
 
 

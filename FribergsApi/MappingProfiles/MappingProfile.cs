@@ -14,24 +14,53 @@ namespace FribergsApi.MappingProfiles
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.ApprovedByAdmin, opt => opt.MapFrom(src => src.ApprovedByAdmin))
-                .ReverseMap(); ;
+                .ForMember(dest => dest.ApprovedByAdmin, opt => opt.MapFrom(src => src.ApprovedByAdmin));
+
+            CreateMap<CustomerViewModel, ApplicationUser>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.FirstName, opt => opt.Ignore())
+                .ForMember(dest => dest.LastName, opt => opt.Ignore())
+                .ForMember(dest => dest.FullName, opt => opt.Ignore())
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .AfterMap((src, dest) =>
+                {
+                    // För- och efternamn från FullName
+                    var parts = src.FullName.Split(' ', 2);
+                    dest.FirstName = parts[0];
+                    dest.LastName = parts.Length > 1 ? parts[1] : "";
+                });
 
             CreateMap<ApplicationUserDto, CustomerViewModel>()
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.Ignore()) // DTO saknar Id
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.ApprovedByAdmin, opt => opt.MapFrom(src => src.ApprovedByAdmin))
-                .ReverseMap();
+                .ForMember(dest => dest.ApprovedByAdmin, opt => opt.Ignore()); // DTO saknar denna
+
+            CreateMap<CustomerViewModel, ApplicationUserDto>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+
 
             CreateMap<ApplicationUser, ApplicationUserDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
-                .ForMember(dest => dest.ApprovedByAdmin, opt => opt.MapFrom(src => src.ApprovedByAdmin))
-                .ReverseMap();
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName));
 
-           
+            CreateMap<ApplicationUserDto, ApplicationUser>()
+                .ForMember(dest => dest.FirstName, opt => opt.Ignore())
+                .ForMember(dest => dest.LastName, opt => opt.Ignore())
+                .ForMember(dest => dest.FullName, opt => opt.Ignore())   
+                .ForMember(dest => dest.ApprovedByAdmin, opt => opt.Ignore())
+               
+                .AfterMap((src, dest) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(src.FullName))
+                    {
+                        var parts = src.FullName.Split(' ', 2);
+                        dest.FirstName = parts[0];
+                        dest.LastName = parts.Length > 1 ? parts[1] : "";
+                    }
+                });
+
+
             CreateMap<CarDto, CarViewModel>()
                 .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.CarImages.Select(ci => ci.Url)))
                 .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.CarDescription))
