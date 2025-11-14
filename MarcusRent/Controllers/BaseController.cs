@@ -1,4 +1,5 @@
-﻿using MarcusRent.Controllers;
+﻿using System.Security.Claims;
+using MarcusRent.Controllers;
 using MarcusRent.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -16,6 +17,8 @@ public class BaseController : Controller
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
+
+
         var token = _contextAccessor.HttpContext?.Session?.GetString("jwtToken");
         Console.WriteLine($"Token: {token}");
         bool isAdmin = false;
@@ -38,4 +41,5 @@ public class BaseController : Controller
 
         base.OnActionExecuting(context);
     }
+    
 }

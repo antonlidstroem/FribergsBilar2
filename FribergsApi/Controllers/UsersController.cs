@@ -24,7 +24,7 @@ namespace MarcusRent.Controllers
 
         // GET: api/users
         [HttpGet]
-        public async Task<ActionResult<List<ApplicationUserDto>>> GetAllUsers()
+        public async Task<ActionResult<List<UserDto>>> GetAllUsers()
         {
             var users = await _userRepository.GetAllUsersAsync();
             if (users == null || users.Count == 0)
@@ -36,7 +36,7 @@ namespace MarcusRent.Controllers
 
         // GET: api/users/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApplicationUserDto>> GetUserById(string id)
+        public async Task<ActionResult<UserDto>> GetUserById(string id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null)
@@ -63,7 +63,7 @@ namespace MarcusRent.Controllers
 
         // PUT: api/users/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUser(string id, [FromBody] ApplicationUserDto applicationUserDto)
+        public async Task<ActionResult> UpdateUser(string id, [FromBody] UserDto userDto)
         {
             var user = await _userRepository.GetUserByIdAsync (id);
             
@@ -73,7 +73,7 @@ namespace MarcusRent.Controllers
             }
 
             
-            _mapper.Map(applicationUserDto, user);
+            _mapper.Map(userDto, user);
 
             // Uppdatera användaren
             var success = await _userRepository.UpdateUserAsync(user);
