@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using MarcusRent.Controllers;
-using MarcusRent.Repositories;
+﻿using MarcusRent.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -20,7 +18,7 @@ public class BaseController : Controller
 
 
         var token = _contextAccessor.HttpContext?.Session?.GetString("jwtToken");
-        Console.WriteLine($"Token: {token}");
+        
         bool isAdmin = false;
 
         if (!string.IsNullOrEmpty(token))
@@ -36,8 +34,8 @@ public class BaseController : Controller
             }
         }
 
-        Console.WriteLine($"IsAdmin: {isAdmin}");
-        ViewData["IsAdmin"] = isAdmin;
+       
+        //ViewData["IsAdmin"] = isAdmin;
 
         base.OnActionExecuting(context);
     }

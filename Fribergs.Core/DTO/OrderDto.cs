@@ -22,9 +22,12 @@ namespace Fribergs.Core.DTO
 
         public decimal Price { get; set; }
 
-        // (Valfritt) för enkelhet i vyn:
+      
         public string? Brand { get; set; }
         public string? Model { get; set; }
+
+        public string CarDescription { get; set; }
+
     }
 }
 

@@ -145,11 +145,15 @@ namespace MarcusRent.Controllers
         }
 
         // POST: Order/Edit/5
+        // POST: Order/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, OrderViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,CarId,StartDate,EndDate,Price,UserId")] OrderViewModel viewModel)
         {
-            if (id != viewModel.OrderId || !ModelState.IsValid)
+            if (id != viewModel.OrderId)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
                 return View(viewModel);
 
             if (viewModel.StartDate >= viewModel.EndDate)
@@ -158,22 +162,17 @@ namespace MarcusRent.Controllers
                 return View(viewModel);
             }
 
-            var order = await _orderRepository.GetOrderByIdAsync(viewModel.OrderId);
-            if (order == null) return NotFound();
+            // Mappa ViewModel direkt till OrderDto för API
+            var orderDto = _mapper.Map<OrderDto>(viewModel);
 
-            var car = await _carRepository.GetCarByIdAsync(viewModel.CarId);
-            if (car == null)
-            {
-                ModelState.AddModelError("CarId", "Bilen kunde inte hittas.");
-                return View(viewModel);
-            }
-
-            _mapper.Map(viewModel, order);
-            await _orderRepository.UpdateOrderAsync(order);
+            // Skicka till API via repository
+            await _orderRepository.UpdateOrderAsync(orderDto);
 
             TempData["TempData"] = "Ordern har uppdaterats";
             return RedirectToAction("Index", "Order");
         }
+
+
 
         // POST: Order/Delete/5
         [HttpPost, ActionName("DeleteConfirmed")]
