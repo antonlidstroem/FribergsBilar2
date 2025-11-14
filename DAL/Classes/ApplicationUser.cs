@@ -11,6 +11,6 @@ namespace DAL.Classes
         public string FullName => $"{FirstName} {LastName}";
         public string Email { get; set; }
         public bool ApprovedByAdmin { get; set; }
-        public List<string> Roles { get; set; } = new List<string>();
+        //public List<string> Roles { get; set; } = new List<string>();
     }
 }

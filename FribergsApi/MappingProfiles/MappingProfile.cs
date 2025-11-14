@@ -29,7 +29,7 @@ namespace FribergsApi.MappingProfiles
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
                 .ForMember(dest => dest.ApprovedByAdmin, opt => opt.MapFrom(src => src.ApprovedByAdmin))
-                .ForMember(dest => dest.Roles, opt => opt.Ignore()).ReverseMap();
+                .ReverseMap();
 
            
             CreateMap<CarDto, CarViewModel>()

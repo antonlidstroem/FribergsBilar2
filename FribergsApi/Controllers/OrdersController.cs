@@ -29,7 +29,7 @@ namespace MarcusRent.Api.Controllers
         }
 
         // GET: api/orders/{id}
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderDto>> GetOrderById(int id)
         {
