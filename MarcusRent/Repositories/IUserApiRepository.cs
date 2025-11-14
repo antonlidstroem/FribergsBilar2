@@ -1,8 +1,7 @@
 ﻿
 
 
-using Fribergs.Core.Models;
-using FribergsApi.Models;
+using Fribergs.Core.DTO;
 
 namespace MarcusRent.Repositories
 {
@@ -17,6 +16,8 @@ namespace MarcusRent.Repositories
         Task<bool> UpdateUserAsync(UserDto user);
         Task<bool> DeleteUserAsync(string id);
         Task<CurrentUserDto> GetCurrentUserAsync();
+        Task<MeResponse?> GetMeAsync();
+        Task<MeResponse?> GetMeAsync(string token);
 
     }
 

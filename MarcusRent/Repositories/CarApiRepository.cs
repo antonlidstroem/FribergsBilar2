@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Fribergs.Core.Models;
+using Fribergs.Core.DTO;
 
 
 namespace MarcusRent.Repositories

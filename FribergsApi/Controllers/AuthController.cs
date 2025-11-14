@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using DAL.Classes;
-using FribergsApi.Models;
+using Fribergs.Core.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

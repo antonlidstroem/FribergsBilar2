@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using MarcusRent.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 using Fribergs.Core.ViewModels;
-using Fribergs.Core.Models;
+using Fribergs.Core.DTO;
+
 
 namespace MarcusRent.Controllers
 {
@@ -120,7 +121,7 @@ namespace MarcusRent.Controllers
             return RedirectToAction("Index", "Car");
         }
 
-        private async Task<IActionResult?> DoesCarExistAsync(OrderViewModel viewModel, CarDtoClient? car)
+        private async Task<IActionResult?> DoesCarExistAsync(OrderViewModel viewModel, CarDto? car)
         {
             if (car == null)
             {

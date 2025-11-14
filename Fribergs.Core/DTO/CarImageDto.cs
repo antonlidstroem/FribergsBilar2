@@ -1,6 +1,6 @@
-﻿using DAL.Classes;
+﻿
 
-namespace FribergsApi.Models
+namespace Fribergs.Core.DTO
 {
     public class CarImageDto
     {

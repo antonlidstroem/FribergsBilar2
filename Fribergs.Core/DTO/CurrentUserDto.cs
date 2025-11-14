@@ -1,4 +1,4 @@
-﻿namespace Fribergs.Core.Models
+﻿namespace Fribergs.Core.DTO
 {
     public class CurrentUserDto
     {

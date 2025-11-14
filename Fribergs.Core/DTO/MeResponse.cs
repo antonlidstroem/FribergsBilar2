@@ -1,4 +1,4 @@
-﻿namespace FribergsApi.Models
+﻿namespace Fribergs.Core.DTO
 {
     public class MeResponse
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Fribergs.Core.Models
+namespace Fribergs.Core.DTO
 {
     public class LoginUserDto
     {

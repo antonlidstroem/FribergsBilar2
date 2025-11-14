@@ -1,5 +1,5 @@
 ﻿
-using Fribergs.Core.Models;
+using Fribergs.Core.DTO;
 
 
 namespace MarcusRent.Repositories

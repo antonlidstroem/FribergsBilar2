@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using FribergsApi.Models;
+using Fribergs.Core.DTO;
 
-namespace Fribergs.Core.Models
-{
+namespace Fribergs.Core.DTO { 
+
     public class CarImageResponse
     {
         [JsonPropertyName("$values")]

@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Fribergs.Core.Models;
-using FribergsApi.Models;
+using Fribergs.Core.DTO;
+
 
 
 namespace MarcusRent.Repositories
@@ -19,20 +19,22 @@ namespace MarcusRent.Repositories
 
 
 
-        public async Task<MeResponseClient?> GetMeAsync()
+        public async Task<MeResponse?> GetMeAsync()
         {
             AddJwtToken();
-            return await _httpClient.GetFromJsonAsync<Fribergs.Core.Models.MeResponseClient>("api/auth/me");
+            return await _httpClient.GetFromJsonAsync<MeResponse>("api/auth/me");
         }
 
-        public async Task<MeResponseClient?> GetMeAsync(string token)
+        
+
+        public async Task<MeResponse?> GetMeAsync(string token)
         {
             _httpClient.DefaultRequestHeaders.Authorization =
                 !string.IsNullOrEmpty(token)
                     ? new AuthenticationHeaderValue("Bearer", token)
                     : null;
 
-            return await _httpClient.GetFromJsonAsync<Fribergs.Core.Models.MeResponseClient>("api/auth/me");
+            return await _httpClient.GetFromJsonAsync<MeResponse>("api/auth/me");
         }
 
         public async Task<UserDto?> GetUserByIdAsync(string id)

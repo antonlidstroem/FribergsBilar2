@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FribergsApi.Models;
 using DAL.Repositories;
-using Fribergs.Core.Models;
+using DAL.Classes;
+using AutoMapper;
+using Fribergs.Core.DTO;
 
 namespace MarcusRent.Controllers
 {
@@ -12,11 +13,13 @@ namespace MarcusRent.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IApplicationUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
         // Konstruktor för att injicera beroenden
-        public UsersController(IApplicationUserRepository userRepository)
+        public UsersController(IApplicationUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         // GET: api/users
@@ -47,36 +50,54 @@ namespace MarcusRent.Controllers
         [HttpPost("{id}/approve")]
         public async Task<ActionResult> ApproveUser(string id)
         {
+            var user = await _userRepository.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound($"Användare med ID {id} hittades inte.");
+            }
+
             await _userRepository.ApproveUserAsync(id);
-            return Ok();
+            return Ok($"Användaren med ID {id} har blivit godkänd.");
         }
+
 
         // PUT: api/users/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUser(string id, [FromBody] ApplicationUserDto user)
+        public async Task<ActionResult> UpdateUser(string id, [FromBody] ApplicationUserDto applicationUserDto)
         {
-            if (id != user.Id)
+            if (id != applicationUserDto.Id)
             {
-                return BadRequest("User ID mismatch.");
+                return BadRequest($"ID mismatch: URL-id ({id}) matchar inte ID i data ({applicationUserDto.Id}).");
             }
 
+            // Använd AutoMapper för att mappa ApplicationUserDto till ApplicationUser
+            var user = _mapper.Map<ApplicationUser>(applicationUserDto);
+
+            // Uppdatera användaren
             var success = await _userRepository.UpdateUserAsync(user);
             if (success)
             {
-                return Ok($"Användaren {id} uppdaterades.");
+                return Ok($"Användaren med ID {id} har uppdaterats.");
             }
 
+            // Om uppdateringen inte lyckades, returnera NotFound
             return NotFound("Användaren kunde inte uppdateras.");
         }
+
 
         // DELETE: api/users/{id}
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(string id)
         {
+            var user = await _userRepository.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound($"Användare med ID {id} hittades inte.");
+            }
+
             await _userRepository.DeleteUserAsync(id);
-            
-                return Ok($"Användaren {id} har tagits bort.");
-           
+            return Ok($"Användaren med ID {id} har tagits bort.");
         }
+
     }
 }

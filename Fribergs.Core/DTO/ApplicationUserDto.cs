@@ -1,5 +1,5 @@
 ﻿
-namespace Fribergs.Core.Models
+namespace Fribergs.Core.DTO
 {
     public class ApplicationUserDto
     {
@@ -10,7 +10,8 @@ namespace Fribergs.Core.Models
 
         public string FullName => $"{FirstName} {LastName}";
         public string Email { get; set; }         
-        public bool ApprovedByAdmin { get; set; }  
+        public bool ApprovedByAdmin { get; set; }
+        public List<string> Roles { get; set; } = new List<string>();
     }
 }
 

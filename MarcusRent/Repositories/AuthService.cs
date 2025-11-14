@@ -1,7 +1,7 @@
 ﻿namespace MarcusRent.Repositories
 {
     using System.Net.Http.Headers;
-    using FribergsApi.Models;
+    using Fribergs.Core.DTO;
     using Microsoft.AspNetCore.Http;
 
     public class AuthService : IAuthService
