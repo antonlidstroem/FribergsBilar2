@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.ConstrainedExecution;
+using Fribergs.Core.DTO;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -28,8 +30,8 @@ namespace Fribergs.Core.ViewModels
 
         public decimal PricePerDay { get; set; }
 
-        public string Brand { get; set; } = "";
-        public string Model { get; set; } = "";
+        public string Brand { get; set; } 
+        public string Model { get; set; } 
         public int Year { get; set; }
 
         public string CarName { get; set; } = "";
@@ -39,5 +41,6 @@ namespace Fribergs.Core.ViewModels
 
         public string CustomerId { get; set; } = "";
         public string UserId { get; set; } = "";
+        
     }
 }

@@ -53,23 +53,43 @@ namespace FribergsApi.MappingProfiles
 
 
 
+            //CreateMap<Order, OrderViewModel>()
+            //    .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Car.Brand))
+            //    .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Car.Model))
+            //    .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.Car.CarDescription))
+            //    .ReverseMap();
+
             CreateMap<Order, OrderViewModel>()
-                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Car.Brand))
-                .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Car.Model))
-                .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.Car.CarDescription))
-                .ReverseMap(); // ReverseMap för POST/PUT behövs inte för dessa fält
-
-            CreateMap<OrderDto, Order>().ReverseMap();
+                    .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Car.Brand))
+                    .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Car.Model))
+                    .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.Car.Year))
+                    .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.Car.CarDescription));
 
 
-            CreateMap<OrderViewModel, OrderDto>()
+            // Order -> OrderDto (inkl. car data)
+            CreateMap<Order, OrderDto>()
+                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Car != null ? src.Car.Brand : null))
+                .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Car != null ? src.Car.Model : null))
+                .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.Car != null ? src.Car.CarDescription : null))
+                .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => src.CarId))
+                .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
+
+
+            CreateMap<OrderDto, Order>();
+
+
+            CreateMap<OrderDto, OrderViewModel>()
                 .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => src.CarId))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand))
-                .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))
+                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand))  // Direkt från OrderDto
+                .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))    // Direkt från OrderDto
                 .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.CarDescription))
                 .ReverseMap();
 
@@ -88,14 +108,14 @@ namespace FribergsApi.MappingProfiles
                 .ForMember(dest => dest.CarImages, opt => opt.MapFrom(src => src.CarImages))
                 .ReverseMap(); ;
 
-   
+
             CreateMap<CarImage, CarImageDto>()
                 .ForMember(dest => dest.CarImageId, opt => opt.MapFrom(src => src.CarImageId))
                 .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Url))
                 .ReverseMap(); ;
 
-        
-            
+
+
         }
     }
 }

@@ -24,9 +24,12 @@ namespace MarcusRent.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<OrderDto>>> GetOrders()
         {
+            
             var orders = await _orderRepository.GetAllOrdersAsync();
-            return Ok(orders);
+            var orderDtos = _mapper.Map<List<OrderDto>>(orders);
+            return Ok(orderDtos);
         }
+
 
         // GET: api/orders/{id}
         //[Authorize]
@@ -35,7 +38,8 @@ namespace MarcusRent.Api.Controllers
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
             if (order == null) return NotFound();
-            return Ok(order);
+            var dto = _mapper.Map<OrderDto>(order);
+            return Ok(dto);
         }
 
         // GET: api/orders/user/{userId}
@@ -43,7 +47,8 @@ namespace MarcusRent.Api.Controllers
         public async Task<ActionResult<List<OrderDto>>> GetOrdersByUser(string userId)
         {
             var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
-            return Ok(orders);
+            var dtos = _mapper.Map<List<OrderDto>>(orders);
+            return Ok(dtos);
         }
 
         // GET: api/orders/isCarBooked?carId=1&startDate=2025-11-12&endDate=2025-11-15
@@ -79,7 +84,7 @@ namespace MarcusRent.Api.Controllers
             return CreatedAtAction(nameof(GetOrderById), new { id = order.OrderId }, order);
         }
 
-        // PUT: api/orders/{id}
+      
         // PUT: api/orders/{id}
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateOrder(int id, OrderDto orderDto)

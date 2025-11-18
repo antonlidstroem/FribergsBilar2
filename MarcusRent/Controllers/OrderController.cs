@@ -10,6 +10,7 @@ using MarcusRent.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 using Fribergs.Core.ViewModels;
 using Fribergs.Core.DTO;
+using Fribergs.Core;
 
 
 namespace MarcusRent.Controllers
@@ -33,11 +34,13 @@ namespace MarcusRent.Controllers
         // GET: Order
         public async Task<IActionResult> Index()
         {
+            DebugHelper.DebugModelStatePostCreate(ModelState);
+
             var userId = GetUserIdFromToken();
             if (string.IsNullOrEmpty(userId))
             {
                 TempData["TempData"] = "Du måste vara inloggad för att se dina bokningar.";
-                return Redirect("/Identity/Account/Login");
+                return Redirect("/Account/Login");
             }
 
             var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
@@ -141,6 +144,14 @@ namespace MarcusRent.Controllers
             if (order == null) return NotFound();
 
             var viewModel = _mapper.Map<OrderViewModel>(order);
+
+            viewModel.Brand = order.Brand;
+            viewModel.Model = order.Model;
+            viewModel.CarDescription = order.CarDescription;
+            return View(viewModel);
+
+
+
             return View(viewModel);
         }
 
@@ -148,8 +159,11 @@ namespace MarcusRent.Controllers
         // POST: Order/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,CarId,StartDate,EndDate,Price,UserId")] OrderViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,CarId,StartDate,EndDate,Price,UserId,Brand,Model,CarDescription")]
+             OrderViewModel viewModel)
         {
+            DebugHelper.DebugModelStatePostCreate(ModelState);
+
             if (id != viewModel.OrderId)
                 return BadRequest();
 
@@ -162,15 +176,23 @@ namespace MarcusRent.Controllers
                 return View(viewModel);
             }
 
-            // Mappa ViewModel direkt till OrderDto för API
-            var orderDto = _mapper.Map<OrderDto>(viewModel);
+            // Hämta befintlig order
+            var existingOrder = await _orderRepository.GetOrderByIdAsync(id);
+            if (existingOrder == null)
+                return NotFound();
 
-            // Skicka till API via repository
-            await _orderRepository.UpdateOrderAsync(orderDto);
+            // Uppdatera endast fälten som kan ändras
+            existingOrder.StartDate = viewModel.StartDate;
+            existingOrder.EndDate = viewModel.EndDate;
+            existingOrder.Price = viewModel.Price;
+
+            // Skicka till repository
+            await _orderRepository.UpdateOrderAsync(existingOrder);
 
             TempData["TempData"] = "Ordern har uppdaterats";
             return RedirectToAction("Index", "Order");
         }
+
 
 
 
