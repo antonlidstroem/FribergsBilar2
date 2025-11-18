@@ -2,6 +2,7 @@ using System.Diagnostics;
 using DAL.Classes;
 using DAL.Repositories;
 using FribergsApi.MappingProfiles;
+using FribergsApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -30,6 +31,10 @@ namespace FribergsApi
                 options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            builder.Services.AddScoped<TokenService>();
+            builder.Services.AddScoped<RefreshTokenService>();
+
 
             // AutoMapper
             builder.Services.AddAutoMapper(cfg =>
@@ -126,7 +131,7 @@ namespace FribergsApi
                 await SeedData.InitializeAsync(services);
             }
 
-            // Konfigurera HTTP-pipeline
+            //Konfigurera HTTP-pipeline
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
