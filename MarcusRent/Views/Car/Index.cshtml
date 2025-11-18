@@ -1,0 +1,67 @@
+﻿@model List<Fribergs.Core.ViewModels.CarViewModel>
+
+@{
+    ViewData["Title"] = "Bilar";
+}
+
+@if (TempData["TempData"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["TempData"]
+    </div>
+}
+
+<h1 class="page-title">Tillgängliga bilar för uthyrning</h1>
+
+<p class="page-subtitle">
+    Upptäck vårt fantastiska utbud av bilar – perfekta för alla tillfällen! Boka enkelt och kör iväg med stil.
+</p>
+
+<div class="container">
+    @foreach (var item in Model)
+    {
+        var carouselId = $"carousel_{item.CarId}";
+        <div class="card mb-5 shadow p-3">
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    @if (item.ImageUrls != null && item.ImageUrls.Any())
+                    {
+                        <div id="@carouselId" class="carousel slide carousel-fade" data-bs-ride="carousel" style="height: 250px;">
+                            <div class="carousel-inner rounded shadow" style="height: 250px;">
+                                @for (int i = 0; i < item.ImageUrls.Count; i++)
+                                {
+                                    var imageUrl = item.ImageUrls[i];
+                                    var isActive = i == 0 ? "active" : "";
+                                    <div class="carousel-item @isActive" style="height: 250px;">
+                                        <img src="@imageUrl" class="d-block w-100" style="object-fit: cover; height: 100%;" alt="Bild på @item.Brand @item.Model" />
+                                    </div>
+                                }
+                            </div>
+                            @if (item.ImageUrls.Count > 1)
+                            {
+                                <button class="carousel-control-prev" type="button" data-bs-target="#@carouselId" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Föregående</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#@carouselId" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Nästa</span>
+                                </button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Ingen bild</span>
+                    }
+                </div>
+                <div class="col-md-7">
+                    <h4>@item.Brand @item.Model (@item.Year)</h4>
+                    <p><strong>Pris per dag:</strong> @item.PricePerDay.ToString("C")</p>
+                    <a asp-controller="Order" asp-action="Create" asp-route-carId="@item.CarId"
+                       class="btn custom-btn btn-lg px-4 py-2">Boka här</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

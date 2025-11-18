@@ -1,0 +1,58 @@
+﻿@model Fribergs.Core.DTO.LoginUserDto
+@{
+    ViewData["Title"] = "Logga in";
+}
+
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["Message"]
+    </div>
+}
+
+@if (TempData["Tempdata"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["Tempdata"]
+    </div>
+}
+
+<div id="demo-alert" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Administratör:</strong><br />
+    Användarnamn: admin@example.com<br />
+    Lösenord: Admin123!<br /><br />
+    <strong>Vanlig användare:</strong><br />
+    Användarnamn: james@example.com<br />
+    Lösenord: James123!
+
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Stäng"></button>
+</div>
+
+<h1>@ViewData["Title"]</h1>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<form asp-action="Login" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="Email">E-post</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Password">Lösenord</label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Logga in</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

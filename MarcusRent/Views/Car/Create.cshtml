@@ -1,0 +1,58 @@
+﻿@model Fribergs.Core.ViewModels.CarViewModel
+
+<h1 class="page-title">SKAPA NY BIL</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Brand"></label>
+        <input asp-for="Brand" class="form-control" type="text" />
+        <span asp-validation-for="Brand" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Model"></label>
+        <input asp-for="Model" class="form-control" type="text" />
+        <span asp-validation-for="Model" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Year"></label>
+        <input asp-for="Year" class="form-control" type="number" min="1900" max="2100" />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PricePerDay"></label>
+        <input asp-for="PricePerDay" class="form-control" type="number" step="0.01" />
+        <span asp-validation-for="PricePerDay" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CarDescription"></label>
+        <textarea asp-for="CarDescription" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="CarDescription" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImageUrls">Bildlänkar</label>
+        <input name="ImageUrls" class="form-control mb-1" placeholder="Bild-URL 1" />
+        <input name="ImageUrls" class="form-control mb-1" placeholder="Bild-URL 2" />
+        <input name="ImageUrls" class="form-control mb-1" placeholder="Bild-URL 3" />
+        <small class="form-text text-muted">Fyll i en eller flera bildlänkar.</small>
+    </div>
+    <br />
+    <div class="form-group">
+        <label asp-for="Available">Bilen är tillgänglig för uthyrning </label>
+        <input asp-for="Available" type="checkbox" />
+        <span asp-validation-for="Available" class="text-danger"></span>
+    </div>
+    <br />
+
+    <button type="submit" class="btn custom-btn">Skapa bil</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
