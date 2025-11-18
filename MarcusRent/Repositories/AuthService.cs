@@ -1,9 +1,11 @@
-﻿namespace MarcusRent.Repositories
-{
-    using System.Net.Http.Headers;
-    using Fribergs.Core.DTO;
-    using Microsoft.AspNetCore.Http;
+﻿
+using System.Net.Http.Headers;
+using Fribergs.Core.DTO;
+using MarcusRent.Interfaces;
+using Microsoft.AspNetCore.Http;
 
+namespace MarcusRent.Repositories
+{
     public class AuthService : IAuthService
     {
         private readonly IHttpContextAccessor _contextAccessor;
@@ -56,13 +58,13 @@
             var token = _contextAccessor.HttpContext?.Session?.GetString("jwtToken");
             if (!string.IsNullOrEmpty(token))
             {
-                _httpClient.DefaultRequestHeaders.Authorization 
+                _httpClient.DefaultRequestHeaders.Authorization
                     = new AuthenticationHeaderValue("Bearer", token);
             }
             else
             {
                 _httpClient.DefaultRequestHeaders.Authorization = null;
-            }     
+            }
         }
 
         public string GetJwtToken()

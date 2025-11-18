@@ -1,6 +1,6 @@
 ﻿using DAL.Classes;
 using Microsoft.EntityFrameworkCore;
-using DAL.Repositories;
+using DAL.Interfaces;
 
 public class CarRepository : ICarRepository
 {

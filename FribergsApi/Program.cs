@@ -1,8 +1,9 @@
 using System.Diagnostics;
 using DAL.Classes;
+using DAL.Interfaces;
 using DAL.Repositories;
 using FribergsApi.MappingProfiles;
-using FribergsApi.Models;
+using FribergsApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

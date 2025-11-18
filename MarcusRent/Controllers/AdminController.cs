@@ -2,7 +2,7 @@
 using System.Linq;
 using AutoMapper;
 using Fribergs.Core.ViewModels;
-using MarcusRent.Repositories;
+using MarcusRent.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

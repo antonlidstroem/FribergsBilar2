@@ -1,9 +1,12 @@
 ﻿//using System.Collections.Generic;
 //using System.Threading.Tasks;
+
+//using System.Collections.Generic;
+//using System.Threading.Tasks;
 using DAL.Classes;
 
 
-namespace DAL.Repositories
+namespace DAL.Interfaces
 {
     public interface IOrderRepository
     {

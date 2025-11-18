@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using AutoMapper;
-using DAL.Repositories;
+using DAL.Interfaces;
 using Fribergs.Core.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

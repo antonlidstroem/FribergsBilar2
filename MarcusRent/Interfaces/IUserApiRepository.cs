@@ -3,7 +3,7 @@
 
 using Fribergs.Core.DTO;
 
-namespace MarcusRent.Repositories
+namespace MarcusRent.Interfaces
 {
     public interface IUserApiRepository
     {

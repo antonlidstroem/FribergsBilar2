@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MarcusRent.Repositories;
 using Fribergs.Core.DTO;
+using MarcusRent.Interfaces;
 
 
 namespace MarcusRent.Controllers

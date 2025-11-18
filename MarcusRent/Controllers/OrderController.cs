@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using MarcusRent.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 using Fribergs.Core.ViewModels;
 using Fribergs.Core.DTO;
 using Fribergs.Core;
+using MarcusRent.Interfaces;
 
 
 namespace MarcusRent.Controllers

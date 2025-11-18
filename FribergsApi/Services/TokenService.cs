@@ -5,7 +5,8 @@ using DAL.Classes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FribergsApi.Models
+namespace FribergsApi.Services
+
 {
     public class TokenService
     {

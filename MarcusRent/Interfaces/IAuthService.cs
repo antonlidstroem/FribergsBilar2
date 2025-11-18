@@ -1,4 +1,4 @@
-﻿namespace MarcusRent.Repositories
+﻿namespace MarcusRent.Interfaces
 {
     public interface IAuthService
     {

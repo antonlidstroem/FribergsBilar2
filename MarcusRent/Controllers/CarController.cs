@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using MarcusRent.Repositories;
 using Fribergs.Core.ViewModels;
+using MarcusRent.Interfaces;
 
 
 namespace MarcusRent.Controllers

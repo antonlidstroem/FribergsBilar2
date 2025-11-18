@@ -1,4 +1,5 @@
 ﻿using DAL.Classes;
+using DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace DAL.Repositories

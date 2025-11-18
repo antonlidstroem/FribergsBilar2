@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using DAL.Classes;
 using Microsoft.EntityFrameworkCore;
 
-namespace FribergsApi.Models
+namespace FribergsApi.Services
+
 {
     public class RefreshTokenService
     {
