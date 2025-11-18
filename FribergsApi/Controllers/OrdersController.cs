@@ -24,6 +24,7 @@ namespace MarcusRent.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<OrderDto>>> GetOrders()
         {
+            
             var orders = await _orderRepository.GetAllOrdersAsync();
             var orderDtos = _mapper.Map<List<OrderDto>>(orders);
             return Ok(orderDtos);

@@ -34,11 +34,13 @@ namespace MarcusRent.Controllers
         // GET: Order
         public async Task<IActionResult> Index()
         {
+            DebugHelper.DebugModelStatePostCreate(ModelState);
+
             var userId = GetUserIdFromToken();
             if (string.IsNullOrEmpty(userId))
             {
                 TempData["TempData"] = "Du måste vara inloggad för att se dina bokningar.";
-                return Redirect("/Identity/Account/Login");
+                return Redirect("/Account/Login");
             }
 
             var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
