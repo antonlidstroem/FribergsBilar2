@@ -10,7 +10,7 @@
 	<div class="col-md-4">
 		<p class="page-subtitle"><strong>Bil:</strong> @Model.Brand @Model.Model</p>
 
-		<form asp-action="Edit">
+		<form asp-action="Edit" method="post">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<input type="hidden" asp-for="OrderId" />
 			<input type="hidden" asp-for="CarId" />

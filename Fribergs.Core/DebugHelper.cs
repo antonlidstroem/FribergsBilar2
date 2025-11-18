@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace MarcusRent.Controllers
+namespace Fribergs.Core
+
 {
     public static class DebugHelper
     {
