@@ -80,14 +80,31 @@ namespace MarcusRent.Api.Controllers
         }
 
         // PUT: api/orders/{id}
+        // PUT: api/orders/{id}
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateOrder(int id, OrderDto orderDto)
         {
-            if (id != orderDto.OrderId) return BadRequest();
-            var order = _mapper.Map<DAL.Classes.Order>(orderDto);
-            await _orderRepository.UpdateOrderAsync(order);
+            if (id != orderDto.OrderId)
+                return BadRequest();
+
+            // Hämta originalet från databasen
+            var existingOrder = await _orderRepository.GetOrderByIdAsync(id);
+            if (existingOrder == null)
+                return NotFound();
+
+            // Uppdatera endast de fält som finns i Order-klassen
+            existingOrder.StartDate = orderDto.StartDate;
+            existingOrder.EndDate = orderDto.EndDate;
+            existingOrder.Price = orderDto.Price;
+            existingOrder.CarId = orderDto.CarId;
+            existingOrder.UserId = orderDto.UserId;
+
+            await _orderRepository.UpdateOrderAsync(existingOrder);
+
             return NoContent();
         }
+
+
 
         // DELETE: api/orders/{id}
         [HttpDelete("{id}")]

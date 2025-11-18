@@ -8,6 +8,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Car> Cars { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<CarImage> CarImages { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
