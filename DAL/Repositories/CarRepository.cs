@@ -33,7 +33,7 @@ public class CarRepository : ICarRepository
 
     public async Task UpdateAsync(Car car)
     {
-        _context.Cars.Update(car);
+        //_context.Cars.Update(car);
         await _context.SaveChangesAsync();
     }
 

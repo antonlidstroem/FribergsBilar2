@@ -104,20 +104,21 @@ namespace FribergsApi.Controllers
                 }
 
                 var existingCar = await _carRepository.GetByIdAsync(id);
-                if (existingCar == null)
+                if (existingCar == null) 
                 {
                     return NotFound($"Car with ID {id} not found.");
                 }
 
-                var car = _mapper.Map<Car>(carDto);
-                await _carRepository.UpdateAsync(car);
+                _mapper.Map(carDto, existingCar);
+
+                await _carRepository.UpdateAsync(existingCar);
 
                 return NoContent();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while updating the car.");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
