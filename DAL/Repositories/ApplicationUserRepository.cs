@@ -1,5 +1,6 @@
 ﻿using DAL.Classes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories
 {
@@ -52,7 +53,7 @@ namespace DAL.Repositories
 
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
-            return _userManager.Users.ToList();
+            return await _userManager.Users.ToListAsync();
         }
         public async Task<ApplicationUser?> GetUserByIdAsync(string id)
         {

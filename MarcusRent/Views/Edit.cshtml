@@ -1,0 +1,24 @@
+﻿@model Fribergs.Core.ViewModels.CustomerViewModel
+
+<h2>Redigera användare</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="form-group">
+        <label>Namn</label>
+        <input asp-for="FullName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Email</label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+
+    <div class="form-check">
+        <input asp-for="ApprovedByAdmin" class="form-check-input" />
+        <label class="form-check-label">Godkänd</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Spara</button>
+</form>

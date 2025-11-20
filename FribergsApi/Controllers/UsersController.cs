@@ -28,10 +28,10 @@ namespace MarcusRent.Controllers
         {
             var users = await _userRepository.GetAllUsersAsync();
             if (users == null || users.Count == 0)
-            {
                 return NotFound("Inga användare hittades.");
-            }
-            return Ok(users);
+
+            var usersDto = _mapper.Map<List<UserDto>>(users);
+            return Ok(usersDto);
         }
 
         // GET: api/users/{id}
@@ -40,9 +40,9 @@ namespace MarcusRent.Controllers
         {
             var user = await _userRepository.GetUserByIdAsync(id);
             if (user == null)
-            {
                 return NotFound($"Användare med ID {id} hittades inte.");
-            }
+
+            //var userDto = _mapper.Map<UserDto>(user);
             return Ok(user);
         }
 
@@ -83,7 +83,7 @@ namespace MarcusRent.Controllers
             }
 
             
-            return NotFound("Användaren har uppdateras.");
+            return Ok("Användaren har uppdateras.");
         }
 
 

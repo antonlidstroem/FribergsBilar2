@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Fribergs.Core.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 
 
@@ -37,6 +39,16 @@ namespace MarcusRent.Repositories
             return await _httpClient.GetFromJsonAsync<MeResponse>("api/auth/me");
         }
 
+        //public async Task<UserDto?> GetUserByIdAsync(string id)
+        //{
+        //    AddJwtToken();
+        //    var response = await _httpClient.GetAsync($"api/users/{id}");
+        //    if (!response.IsSuccessStatusCode) return null;
+
+        //    var user = await response.Content.ReadFromJsonAsync<UserDto?>();
+        //    return user;
+        //}
+    
         public async Task<UserDto?> GetUserByIdAsync(string id)
         {
             AddJwtToken();
@@ -52,6 +64,7 @@ namespace MarcusRent.Repositories
             var response = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/users");
             return response ?? new List<UserDto>();
         }
+
 
         public async Task ApproveUserAsync(string id)
         {

@@ -140,12 +140,17 @@ public class SeedData
     private static async Task SeedOrdersAsync(IOrderRepository orderRepository, List<ApplicationUser> users, List<Car> cars)
     {
         var existingOrders = await orderRepository.GetAllOrdersAsync();
-        if (existingOrders.Any() || users.Count < 3 || cars.Count < 5)
+
+        // Om redan orders finns, eller för få användare/bilar, hoppa över
+        if (existingOrders.Any() || users.Count < 1 || cars.Count < 1)
             return;
 
         var orders = new List<Order>();
 
-        for (int i = 0; i < users.Count; i++)
+        // Loopar bara så många gånger som det finns minst av users och cars
+        int orderCount = Math.Min(users.Count, cars.Count);
+
+        for (int i = 0; i < orderCount; i++)
         {
             orders.Add(new Order
             {
@@ -154,7 +159,6 @@ public class SeedData
                 StartDate = DateTime.Today.AddDays(-i * 3),
                 EndDate = DateTime.Today.AddDays(i + 1),
                 Price = cars[i].PricePerDay * (i + 1),
-                //ActiveOrder = true,
                 Car = cars[i]
             });
         }
@@ -164,4 +168,5 @@ public class SeedData
             await orderRepository.AddOrderAsync(order);
         }
     }
+
 }
