@@ -111,6 +111,49 @@ namespace MarcusRent.Controllers
         //    return RedirectToAction(nameof(Index));
         //}
 
+        //public async Task<IActionResult> Delete(int id)
+        //{
+        //    var isInOrder = await _carRepository.IsCarInAnyOrderAsync(id);
+
+        //    if (isInOrder)
+        //    {
+        //        TempData["Error"] = "Bilen kan inte raderas eftersom den finns i en order.";
+        //        return RedirectToAction(nameof(Index));
+        //    }
+
+        //    var success = await _carRepository.DeleteCarAsync(id);
+
+        //    if (!success)
+        //    {
+        //        TempData["Error"] = "Kunde inte radera bilen.";
+        //    }
+
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            bool inOrder = await _carRepository.IsCarInAnyOrderAsync(id);
+
+            if (inOrder)
+            {
+                TempData["ErrorMessage"] = "Bilen kan inte raderas eftersom den finns i en order.";
+                return RedirectToAction("Index", "Admin");
+            }
+
+            var success = await _carRepository.DeleteCarAsync(id);
+
+            if (!success)
+                TempData["ErrorMessage"] = "Kunde inte radera bilen.";
+            else
+                TempData["SuccessMessage"] = "Bilen raderades.";
+
+            return RedirectToAction("Index", "Admin");
+        }
+
 
     }
 }

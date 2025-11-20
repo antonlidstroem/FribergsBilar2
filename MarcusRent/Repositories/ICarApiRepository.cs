@@ -9,5 +9,7 @@ namespace MarcusRent.Repositories
         Task<CarDto?> CreateCarAsync(CarDto car);
         Task<bool> UpdateCarAsync(CarDto car);
         Task<bool> DeleteCarAsync(int id);
+        Task<bool> IsCarInAnyOrderAsync(int carId);
+
     }
 }
