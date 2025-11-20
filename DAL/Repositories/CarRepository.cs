@@ -33,19 +33,25 @@ public class CarRepository : ICarRepository
 
     public async Task UpdateAsync(Car car)
     {
-        _context.Cars.Update(car);
+        //_context.Cars.Update(car);
         await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
     {
-        var car = await _context.Cars.FindAsync(id);
-        if (car != null)
-        {
-            _context.Cars.Remove(car);
-            await _context.SaveChangesAsync();
-        }
+        var car = await _context.Cars
+            .Include(c => c.CarImages)
+            .FirstOrDefaultAsync(c => c.CarId == id);
+
+        if (car == null) return;
+
+        if (car.CarImages != null)
+            _context.CarImages.RemoveRange(car.CarImages);
+
+        _context.Cars.Remove(car);
+        await _context.SaveChangesAsync();
     }
+
     public async Task<bool> ExistsAsync(int id)
     {
         return await _context.Cars.AnyAsync(c => c.CarId == id);
@@ -56,6 +62,10 @@ public class CarRepository : ICarRepository
             .Where(c => c.Available)
             .Include(c => c.CarImages)
             .ToListAsync();
+    }
+    public async Task<bool> IsCarInAnyOrderAsync(int carId)
+    {
+        return await _context.Orders.AnyAsync(o => o.CarId == carId);
     }
 }
 

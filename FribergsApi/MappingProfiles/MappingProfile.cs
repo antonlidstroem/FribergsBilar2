@@ -43,7 +43,49 @@ namespace FribergsApi.MappingProfiles
                 .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.CarDescription))
                 .ForMember(dest => dest.TotalEarnings, opt => opt.Ignore())
                 .ForMember(dest => dest.CurrentRentalEndDate, opt => opt.Ignore())
-                .ForMember(dest => dest.CurrentCustomerName, opt => opt.Ignore()).ReverseMap(); ;
+                .ForMember(dest => dest.CurrentCustomerName, opt => opt.Ignore());
+
+            //CreateMap<CarViewModel, CarDto>()
+            //    .ForMember(dest => dest.CarImagesResponse, opt => opt.MapFrom(src =>
+            //       new CarImageResponse { Values = src.ImageUrls.Select(u => new CarImageDto { Url = u }).ToList() }));
+
+            //CreateMap<CarViewModel, CarDto>()
+            //    .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => src.CarId))
+            //    .ForMember(dest => dest.CarImagesResponse, opt => opt.MapFrom(src =>
+            //       new CarImageResponse { Values = src.ImageUrls.Select(u => new CarImageDto { Url = u }).ToList() }));
+
+
+
+            //CreateMap<CarViewModel, CarDto>()
+            //    .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => src.CarId))
+            //    .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand))
+            //    .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))
+            //    .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.Year))
+            //    .ForMember(dest => dest.PricePerDay, opt => opt.MapFrom(src => src.PricePerDay))
+            //    .ForMember(dest => dest.Available, opt => opt.MapFrom(src => src.Available))
+            //    .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.CarDescription))
+            //    .ForMember(dest => dest.CarImagesResponse, opt => opt.Ignore()); // om du inte mappat CarImages
+
+            CreateMap<CarViewModel, CarDto>()
+                .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => src.CarId))
+                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand))
+                .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src.Model))
+                .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.Year))
+                .ForMember(dest => dest.PricePerDay, opt => opt.MapFrom(src => src.PricePerDay))
+                .ForMember(dest => dest.Available, opt => opt.MapFrom(src => src.Available))
+                .ForMember(dest => dest.CarDescription, opt => opt.MapFrom(src => src.CarDescription))
+                .ForMember(dest => dest.CarImagesResponse, opt => opt.MapFrom(src =>
+                    new CarImageResponse
+                    {
+                        Values = src.ImageUrls
+                                    .Where(u => !string.IsNullOrEmpty(u))
+                                    .Select(url => new CarImageDto { Url = url })
+                                    .ToList()
+                    }));    
+
+
+
+
 
 
             CreateMap<CarDto, OrderViewModel>()

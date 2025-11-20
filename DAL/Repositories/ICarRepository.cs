@@ -16,6 +16,11 @@ namespace DAL.Repositories
 
         //public IQueryable<Car> GetAllAvailable();
         Task<List<Car>> GetAllAvailableAsync();
+        Task<bool> IsCarInAnyOrderAsync(int carId);
+
+      
+
+
 
 
     }

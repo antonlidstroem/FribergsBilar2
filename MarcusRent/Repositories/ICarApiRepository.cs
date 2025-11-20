@@ -1,6 +1,4 @@
-﻿
-using Fribergs.Core.DTO;
-
+﻿using Fribergs.Core.DTO;
 
 namespace MarcusRent.Repositories
 {
@@ -8,5 +6,10 @@ namespace MarcusRent.Repositories
     {
         Task<List<CarDto>> GetCarsAsync();
         Task<CarDto> GetCarByIdAsync(int id);
+        Task<CarDto?> CreateCarAsync(CarDto car);
+        Task<bool> UpdateCarAsync(CarDto car);
+        Task<bool> DeleteCarAsync(int id);
+        Task<bool> IsCarInAnyOrderAsync(int carId);
+
     }
 }

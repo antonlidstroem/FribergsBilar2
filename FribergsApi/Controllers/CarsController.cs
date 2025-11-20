@@ -104,20 +104,21 @@ namespace FribergsApi.Controllers
                 }
 
                 var existingCar = await _carRepository.GetByIdAsync(id);
-                if (existingCar == null)
+                if (existingCar == null) 
                 {
                     return NotFound($"Car with ID {id} not found.");
                 }
 
-                var car = _mapper.Map<Car>(carDto);
-                await _carRepository.UpdateAsync(car);
+                _mapper.Map(carDto, existingCar);
+
+                await _carRepository.UpdateAsync(existingCar);
 
                 return NoContent();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while updating the car.");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -126,21 +127,44 @@ namespace FribergsApi.Controllers
         {
             try
             {
-                var car = await _carRepository.GetByIdAsync(id);
-                if (car == null)
-                {
+                var exists = await _carRepository.ExistsAsync(id);
+                if (!exists)
                     return NotFound($"Car with ID {id} not found.");
-                }
 
-                await _carRepository.DeleteAsync(id);  
+                bool inOrder = await _carRepository.IsCarInAnyOrderAsync(id);
+                if (inOrder)
+                    return Conflict("Car cannot be deleted because it is used in an order.");
+
+                await _carRepository.DeleteAsync(id);
                 return NoContent();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while deleting the car.");
+                _logger.LogError(ex, "Error deleting car.");
                 return StatusCode(500, "Internal server error");
             }
         }
-        
+
+        [HttpGet("{id}/isinorder")]
+        public async Task<ActionResult<bool>> IsCarInOrder(int id)
+        {
+            try
+            {
+                var exists = await _carRepository.ExistsAsync(id);
+                if (!exists)
+                    return NotFound($"Car with ID {id} not found.");
+
+                var isInOrder = await _carRepository.IsCarInAnyOrderAsync(id);
+                return Ok(isInOrder);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking if car is in order");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+
+
     }
 }
