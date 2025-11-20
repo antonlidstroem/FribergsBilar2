@@ -8,7 +8,7 @@ namespace DAL.Classes
         public string? LastName { get; set; }
 
         public string FullName => $"{FirstName} {LastName}";
-        public string Email { get; set; }
+        //public string Email { get; set; }
         public bool ApprovedByAdmin { get; set; }
     }
 }

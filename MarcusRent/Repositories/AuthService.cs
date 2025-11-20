@@ -69,5 +69,14 @@
         {
             return _contextAccessor.HttpContext?.Session?.GetString("jwtToken") ?? string.Empty;
         }
+
+        public async Task<AuthResponse?> RegisterAsync(string email, string password)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/auth/register", new { Email = email, Password = password });
+            if (!response.IsSuccessStatusCode) return null;
+
+            return await response.Content.ReadFromJsonAsync<AuthResponse>();
+        }
+
     }
 }

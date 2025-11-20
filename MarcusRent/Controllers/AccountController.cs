@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MarcusRent.Repositories;
+﻿using System.Net.Http;
 using Fribergs.Core.DTO;
+using MarcusRent.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace MarcusRent.Controllers
@@ -9,6 +10,7 @@ namespace MarcusRent.Controllers
     {
         private readonly IUserApiRepository _userApiRepository;
         private readonly IHttpContextAccessor _contextAccessor;
+        
         private readonly IAuthService _authService;
 
         public AccountController(IUserApiRepository userApiRepository, IHttpContextAccessor contextAccessor, IAuthService authService)
@@ -56,5 +58,36 @@ namespace MarcusRent.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View(new RegisterUserDto());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterUserDto model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            if (model.Password != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("", "Lösenorden matchar inte");
+                return View(model);
+            }
+
+            var result = await _authService.RegisterAsync(model.Email, model.Password);
+
+            if (result == null)
+            {
+                ViewBag.Error = "Kunde inte registrera användaren";
+                return View(model);
+            }
+
+            return RedirectToAction("Login");
+        }
+
+
     }
 }
