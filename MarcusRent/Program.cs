@@ -43,9 +43,6 @@ namespace MarcusRent
 
 
 
-
-
-
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
             builder.Services.AddDistributedMemoryCache();

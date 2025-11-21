@@ -13,10 +13,13 @@ namespace MarcusRent.Repositories
     {
         private readonly HttpClient _httpClient;
         private readonly IAuthService _authService;
-        public UserApiRepository(HttpClient httpClient, IAuthService authService)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public UserApiRepository(HttpClient httpClient, IAuthService authService, 
+            IHttpContextAccessor contextAccessor)
         {
             _httpClient = httpClient;
             _authService = authService;
+            _contextAccessor = contextAccessor;
         }
         public async Task<MeResponse?> GetMeAsync()
         {
@@ -75,10 +78,24 @@ namespace MarcusRent.Repositories
             return await response.Content.ReadFromJsonAsync<CurrentUserDto>();
         }
 
+        //private void AddJwtToken()
+        //{
+        //    _authService.AddJwtToken();
+        //}
+
         private void AddJwtToken()
         {
-            _authService.AddJwtToken();
+            var token = _contextAccessor.HttpContext?.Session?.GetString("jwtToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
         }
+
     }
 }
 

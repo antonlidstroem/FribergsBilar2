@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DAL.Classes;
 using AutoMapper;
-using Fribergs.Core.DTO;
+using DAL.Classes;
 using DAL.Interfaces;
+using Fribergs.Core.DTO;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MarcusRent.Controllers
 {
@@ -44,6 +45,7 @@ namespace MarcusRent.Controllers
         }
 
         // POST: api/users/{id}/approve
+        [Authorize]
         [HttpPost("{id}/approve")]
         public async Task<ActionResult> ApproveUser(string id)
         {
@@ -58,6 +60,7 @@ namespace MarcusRent.Controllers
         }
 
         // PUT: api/users/{id}
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateUser(string id, [FromBody] UserDto userDto)
         {
@@ -77,6 +80,7 @@ namespace MarcusRent.Controllers
         }
 
         // DELETE: api/users/{id}
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(string id)
         {

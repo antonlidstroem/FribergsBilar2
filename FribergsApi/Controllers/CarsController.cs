@@ -2,6 +2,7 @@
 using DAL.Classes;
 using DAL.Interfaces;
 using Fribergs.Core.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -65,6 +66,7 @@ namespace FribergsApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<CarDto>> CreateCar([FromBody] CarDto carDto)
         {
@@ -89,6 +91,7 @@ namespace FribergsApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCar(int id, [FromBody] CarDto carDto)
         {
@@ -118,6 +121,7 @@ namespace FribergsApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCar(int id)
         {

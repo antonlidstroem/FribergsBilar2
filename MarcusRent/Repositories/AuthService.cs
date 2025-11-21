@@ -27,7 +27,6 @@
                     return false;
 
                 var session = _contextAccessor.HttpContext.Session;
-
                 session.SetString("jwtToken", result.Token);
                 session.SetString("userEmail", result.Email);
                 session.SetString("userId", result.UserId);

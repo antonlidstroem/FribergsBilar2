@@ -84,6 +84,7 @@ namespace MarcusRent.Api.Controllers
         }
 
         // PUT: api/orders/{id}
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateOrder(int id, OrderDto orderDto)
         {
@@ -106,6 +107,7 @@ namespace MarcusRent.Api.Controllers
         }
 
         // DELETE: api/orders/{id}
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteOrder(int id)
         {
