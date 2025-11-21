@@ -134,14 +134,24 @@ namespace FribergsApi.Controllers
             var user = await _userService.GetUserByEmailAsync(email);
             if (user == null) return NotFound();
 
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
             var roles = await _userService.GetRolesAsync(user);
 
-            return Ok(new
+            var dto = new UserDto
             {
-                user.Email,
-                Roles = roles
-            });
+                UserId = userId,
+                Email = user.Email,
+                Roles = roles.ToList(),
+                FullName = $"{user.FirstName} {user.LastName}",
+                ApprovedByAdmin = user.ApprovedByAdmin
+
+            };
+            return Ok(dto);
         }
+
+
         // ---------------------------
         // REFRESH TOKEN
         // ---------------------------

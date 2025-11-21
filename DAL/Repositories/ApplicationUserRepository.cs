@@ -1,15 +1,18 @@
 ﻿using DAL.Classes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories
 {
     public class ApplicationUserRepository : IApplicationUserRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public ApplicationUserRepository(UserManager<ApplicationUser> userManager)
+        public ApplicationUserRepository(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         public async Task<ApplicationUser?> AddAsync(string firstName, string lastName, string email, string password, string role)
@@ -52,7 +55,7 @@ namespace DAL.Repositories
 
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
-            return _userManager.Users.ToList();
+            return await _userManager.Users.ToListAsync();
         }
         public async Task<ApplicationUser?> GetUserByIdAsync(string id)
         {
@@ -68,18 +71,24 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task DeleteUserAsync(string id)
+        public async Task<bool> DeleteUserAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user != null)
+            if (user == null)
             {
-                await _userManager.DeleteAsync(user);
+                return false;
             }
+
+            var hasOrders = await _context.Orders.AnyAsync(o => o.UserId == id);
+
+            if (hasOrders) {
+                return false;
+            }
+
+            var result = await _userManager.DeleteAsync(user);  
+            return result.Succeeded;
         }
-        //public async Task UpdateUserAsync(ApplicationUser user)
-        //{
-        //    await _userManager.UpdateAsync(user);
-        //}
+
 
         public async Task<bool> UpdateUserAsync(ApplicationUser user)
         {
