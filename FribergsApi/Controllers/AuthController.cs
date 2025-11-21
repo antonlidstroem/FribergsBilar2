@@ -139,13 +139,16 @@ namespace FribergsApi.Controllers
 
             var roles = await _userService.GetRolesAsync(user);
 
-            return Ok(new
+            var dto = new UserDto
             {
-                user.Email,
-                Roles = roles,
-                userId
+                UserId = userId,
+                Email = user.Email,
+                Roles = roles.ToList(),
+                FullName = $"{user.FirstName} {user.LastName}",
+                ApprovedByAdmin = user.ApprovedByAdmin
 
-            });
+            };
+            return Ok(dto);
         }
 
 

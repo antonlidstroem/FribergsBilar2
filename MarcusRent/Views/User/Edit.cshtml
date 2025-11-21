@@ -6,7 +6,8 @@
     @Html.AntiForgeryToken()
 
     <!-- Hidden field för UserId -->
-    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="UserId" value="@Model.UserId" />
+
 
     <div class="form-group">
         <label asp-for="FullName"></label>

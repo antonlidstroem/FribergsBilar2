@@ -28,8 +28,7 @@ namespace MarcusRent.Controllers
                 return NotFound();
 
             var vm = _mapper.Map<CustomerViewModel>(user);
-
-            Console.WriteLine($"USERID: {vm.UserId}");
+            vm.UserId = id;
 
             return View(vm);
         }
