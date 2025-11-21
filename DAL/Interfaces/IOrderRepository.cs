@@ -1,7 +1,7 @@
 ﻿using DAL.Classes;
 
 
-namespace DAL.Repositories
+namespace DAL.Interfaces
 {
     public interface IOrderRepository
     {

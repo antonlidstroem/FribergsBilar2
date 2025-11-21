@@ -2,6 +2,7 @@
 {
     using System.Net.Http.Headers;
     using Fribergs.Core.DTO;
+    using MarcusRent.Interfaces;
     using Microsoft.AspNetCore.Http;
 
     public class AuthService : IAuthService

@@ -1,7 +1,7 @@
 ﻿using DAL.Classes;
 using Microsoft.AspNetCore.Identity;
 
-namespace DAL.Repositories
+namespace DAL.Interfaces
 {
     public interface IApplicationUserRepository
     {

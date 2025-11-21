@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DAL.Repositories;
 using DAL.Classes;
 using AutoMapper;
 using Fribergs.Core.DTO;
+using DAL.Interfaces;
 
 namespace MarcusRent.Controllers
 {

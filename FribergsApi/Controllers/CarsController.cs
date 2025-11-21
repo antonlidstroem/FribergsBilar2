@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using DAL.Classes;
-using DAL.Repositories;
+using DAL.Interfaces;
 using Fribergs.Core.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

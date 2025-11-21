@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using Fribergs.Core.DTO;
+using MarcusRent.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 

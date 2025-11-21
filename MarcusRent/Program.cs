@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using FribergsApi.MappingProfiles;
+using MarcusRent.Interfaces;
 
 
 namespace MarcusRent

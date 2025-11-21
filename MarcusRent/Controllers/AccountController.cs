@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using Fribergs.Core.DTO;
-using MarcusRent.Repositories;
+using MarcusRent.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 

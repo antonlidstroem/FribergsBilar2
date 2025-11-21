@@ -1,4 +1,5 @@
 ﻿using DAL.Classes;
+using DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using DAL.Classes;
+using DAL.Interfaces;
 using DAL.Repositories;
 using FribergsApi.MappingProfiles;
 using FribergsApi.Models;

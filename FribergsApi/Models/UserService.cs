@@ -1,5 +1,5 @@
 ﻿using DAL.Classes;
-using DAL.Repositories;
+using DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 public class UserService
