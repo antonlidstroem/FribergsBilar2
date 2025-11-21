@@ -35,20 +35,15 @@ namespace FribergsApi
             builder.Services.AddScoped<TokenService>();
             builder.Services.AddScoped<RefreshTokenService>();
 
-
             // AutoMapper
             builder.Services.AddAutoMapper(cfg =>
             { }, typeof(MappingProfile));
-
-            
-
 
             // DAL-repositories
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             builder.Services.AddScoped<UserService>();
-
 
             // CORS
             builder.Services.AddCors(options =>
@@ -60,13 +55,6 @@ namespace FribergsApi
                            .AllowAnyHeader();
                 });
             });
-
-            // Controllers
-            //builder.Services.AddControllers()
-            //    .AddJsonOptions(options =>
-            //    {
-            //        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-            //    });
 
             builder.Services.AddControllers()
               .AddJsonOptions(options =>

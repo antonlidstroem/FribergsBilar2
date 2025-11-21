@@ -33,7 +33,6 @@ namespace FribergsApi.Controllers
                     return NotFound("No cars found.");
                 }
 
-                //Mapping
                 var carDtos = _mapper.Map<IEnumerable<CarDto>>(cars);
                 return Ok(carDtos);
 
@@ -66,8 +65,6 @@ namespace FribergsApi.Controllers
             }
         }
 
-        
-
         [HttpPost]
         public async Task<ActionResult<CarDto>> CreateCar([FromBody] CarDto carDto)
         {
@@ -77,7 +74,6 @@ namespace FribergsApi.Controllers
                 {
                     return BadRequest("Car data is required.");
                 }
-
 
                 var car = _mapper.Map<Car>(carDto);
                 await _carRepository.AddAsync(car);
@@ -104,7 +100,7 @@ namespace FribergsApi.Controllers
                 }
 
                 var existingCar = await _carRepository.GetByIdAsync(id);
-                if (existingCar == null) 
+                if (existingCar == null)
                 {
                     return NotFound($"Car with ID {id} not found.");
                 }
@@ -163,8 +159,5 @@ namespace FribergsApi.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
-
-
     }
 }

@@ -8,13 +8,11 @@
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly HttpClient _httpClient;
-
         public AuthService(IHttpContextAccessor contextAccessor, HttpClient httpClient)
         {
             _contextAccessor = contextAccessor;
             _httpClient = httpClient;
         }
-
         public async Task<bool> LoginAsync(string email, string password)
         {
             try
@@ -41,7 +39,6 @@
                 return false;
             }
         }
-
         public void Logout()
         {
             var session = _contextAccessor.HttpContext.Session;
@@ -49,8 +46,6 @@
             session.Remove("userEmail");
             session.Remove("userId");
         }
-
-
         public void AddJwtToken()
         {
             var token = _contextAccessor.HttpContext?.Session?.GetString("jwtToken");

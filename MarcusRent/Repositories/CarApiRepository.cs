@@ -44,13 +44,6 @@ namespace MarcusRent.Repositories
         }
 
         //// PUT update car
-        //public async Task<bool> UpdateCarAsync(CarDto car)
-        //{
-        //    AddJwtToken();
-        //    var response = await _httpClient.PutAsJsonAsync($"api/cars/{car.CarId}", car);
-        //    return response.IsSuccessStatusCode;
-        //}
-
         public async Task<bool> UpdateCarAsync(CarDto car)
         {
             AddJwtToken();
@@ -63,7 +56,6 @@ namespace MarcusRent.Repositories
 
             return response.IsSuccessStatusCode;
         }
-
 
         // DELETE car
         public async Task<bool> DeleteCarAsync(int id)
@@ -78,17 +70,6 @@ namespace MarcusRent.Repositories
             _authService.AddJwtToken();
         }
 
-        //public async Task<bool> IsCarInAnyOrderAsync(int carId)
-        //{
-        //    AddJwtToken();
-        //    // Antag att din API har en endpoint GET /api/cars/{id}/isinorder
-        //    var response = await _httpClient.GetAsync($"api/cars/{carId}/isinorder");
-        //    if (!response.IsSuccessStatusCode) return false;
-
-        //    var result = await response.Content.ReadFromJsonAsync<bool>();
-        //    return result;
-        //}
-
         public async Task<bool> IsCarInAnyOrderAsync(int carId)
         {
             AddJwtToken();
@@ -100,9 +81,5 @@ namespace MarcusRent.Repositories
 
             return await response.Content.ReadFromJsonAsync<bool>();
         }
-
-
-
-
     }
 }

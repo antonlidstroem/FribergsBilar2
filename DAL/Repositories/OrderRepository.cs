@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using DAL.Classes;
 
-
-
 namespace DAL.Repositories
 {
     public class OrderRepository : IOrderRepository

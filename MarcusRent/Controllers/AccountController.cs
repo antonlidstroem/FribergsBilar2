@@ -8,16 +8,13 @@ namespace MarcusRent.Controllers
 {
     public class AccountController : BaseController
     {
-        private readonly IUserApiRepository _userApiRepository;
-        private readonly IHttpContextAccessor _contextAccessor;
+
         
         private readonly IAuthService _authService;
 
         public AccountController(IUserApiRepository userApiRepository, IHttpContextAccessor contextAccessor, IAuthService authService)
             : base(userApiRepository, contextAccessor)
         {
-            _userApiRepository = userApiRepository;
-            _contextAccessor = contextAccessor;
             _authService = authService;
         }
 

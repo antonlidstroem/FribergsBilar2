@@ -13,8 +13,6 @@ namespace DAL.Repositories
         Task UpdateAsync(Car car);
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
-
-        //public IQueryable<Car> GetAllAvailable();
         Task<List<Car>> GetAllAvailableAsync();
         Task<bool> IsCarInAnyOrderAsync(int carId);
 

@@ -1,6 +1,4 @@
-﻿//using System.Collections.Generic;
-//using System.Threading.Tasks;
-using DAL.Classes;
+﻿using DAL.Classes;
 
 
 namespace DAL.Repositories

@@ -31,7 +31,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(o => o.Car)
             .WithMany()
             .HasForeignKey(o => o.CarId)
-            .OnDelete(DeleteBehavior.Restrict); // valfritt men bra praxis
+            .OnDelete(DeleteBehavior.Restrict); 
     }
 }
 

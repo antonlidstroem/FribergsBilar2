@@ -14,8 +14,6 @@ namespace MarcusRent.Controllers
     {
         private readonly IApplicationUserRepository _userRepository;
         private readonly IMapper _mapper;
-
-        // Konstruktor för att injicera beroenden
         public UsersController(IApplicationUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
@@ -42,7 +40,6 @@ namespace MarcusRent.Controllers
             if (user == null)
                 return NotFound($"Användare med ID {id} hittades inte.");
 
-            //var userDto = _mapper.Map<UserDto>(user);
             return Ok(user);
         }
 
@@ -60,32 +57,24 @@ namespace MarcusRent.Controllers
             return Ok($"Användaren med ID {id} har blivit godkänd.");
         }
 
-
         // PUT: api/users/{id}
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateUser(string id, [FromBody] UserDto userDto)
         {
-            var user = await _userRepository.GetUserByIdAsync (id);
-            
+            var user = await _userRepository.GetUserByIdAsync(id);
+
             if (user == null)
             {
                 return NotFound();
             }
-
-            
             _mapper.Map(userDto, user);
-
-            // Uppdatera användaren
             var success = await _userRepository.UpdateUserAsync(user);
             if (!success)
             {
                 return NotFound();
             }
-
-            
             return Ok("Användaren har uppdateras.");
         }
-
 
         // DELETE: api/users/{id}
         [HttpDelete("{id}")]
@@ -100,6 +89,5 @@ namespace MarcusRent.Controllers
             await _userRepository.DeleteUserAsync(id);
             return Ok($"Användaren med ID {id} har tagits bort.");
         }
-
     }
 }

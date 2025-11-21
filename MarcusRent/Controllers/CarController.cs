@@ -49,15 +49,8 @@ namespace MarcusRent.Controllers
 
             var model = _mapper.Map<CarViewModel>(car);
 
-            // Säkerställ att ImageUrls-listan alltid finns
             if (model.ImageUrls == null)
                 model.ImageUrls = new List<string>();
-
-            // Lägg till tomma strängar så att det alltid finns minst 3 platser
-            while (model.ImageUrls.Count < 3)
-            {
-                model.ImageUrls.Add(string.Empty);
-            }
 
             Console.WriteLine(model.CarId);
 
@@ -65,13 +58,8 @@ namespace MarcusRent.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int CarId, [FromForm] CarViewModel model)
         public async Task<IActionResult> Edit([FromForm] CarViewModel cVModel)
         {
-            DebugHelper.DebugModelStatePostCreate(ModelState);
-
-            //if (CarId != model.CarId) return BadRequest();
 
             Console.WriteLine(cVModel.CarId);
 
@@ -92,45 +80,6 @@ namespace MarcusRent.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(CarViewModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return View(model);
-
-        //    var carDto = _mapper.Map<CarDto>(model);
-        //    var success = await _carRepository.UpdateCarAsync(carDto);
-
-        //    if (!success)
-        //    {
-        //        ModelState.AddModelError("", "Kunde inte uppdatera bilen.");
-        //        return View(model);
-        //    }
-
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var isInOrder = await _carRepository.IsCarInAnyOrderAsync(id);
-
-        //    if (isInOrder)
-        //    {
-        //        TempData["Error"] = "Bilen kan inte raderas eftersom den finns i en order.";
-        //        return RedirectToAction(nameof(Index));
-        //    }
-
-        //    var success = await _carRepository.DeleteCarAsync(id);
-
-        //    if (!success)
-        //    {
-        //        TempData["Error"] = "Kunde inte radera bilen.";
-        //    }
-
-        //    return RedirectToAction(nameof(Index));
-        //}
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -153,7 +102,5 @@ namespace MarcusRent.Controllers
 
             return RedirectToAction("Index", "Admin");
         }
-
-
     }
 }

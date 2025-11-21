@@ -15,8 +15,6 @@ public class BaseController : Controller
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-
-
         var token = _contextAccessor.HttpContext?.Session?.GetString("jwtToken");
         
         bool isAdmin = false;
@@ -33,10 +31,6 @@ public class BaseController : Controller
                 Console.WriteLine($"GetMeAsync failed: {ex.Message}");
             }
         }
-
-       
-        //ViewData["IsAdmin"] = isAdmin;
-
         base.OnActionExecuting(context);
     }
     
