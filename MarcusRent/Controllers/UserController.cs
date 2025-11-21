@@ -62,7 +62,7 @@ namespace MarcusRent.Controllers
 
             if (!result)
             {
-                TempData["ErrorMessage"] = "Kunde inte radera användaren.";
+                TempData["ErrorMessage"] = "Kunde inte radera användaren. Användaren har kopplade ordrar.";
                 return RedirectToAction("Index", "Admin");
             }
 
