@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using AutoMapper;
-using DAL.Repositories;
+using DAL.Interfaces;
 using Fribergs.Core.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,6 @@ namespace MarcusRent.Api.Controllers
             var orderDtos = _mapper.Map<List<OrderDto>>(orders);
             return Ok(orderDtos);
         }
-
 
         // GET: api/orders/{id}
         //[Authorize]
@@ -84,7 +83,6 @@ namespace MarcusRent.Api.Controllers
             return CreatedAtAction(nameof(GetOrderById), new { id = order.OrderId }, order);
         }
 
-      
         // PUT: api/orders/{id}
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateOrder(int id, OrderDto orderDto)
@@ -92,12 +90,10 @@ namespace MarcusRent.Api.Controllers
             if (id != orderDto.OrderId)
                 return BadRequest();
 
-            // Hämta originalet från databasen
             var existingOrder = await _orderRepository.GetOrderByIdAsync(id);
             if (existingOrder == null)
                 return NotFound();
 
-            // Uppdatera endast de fält som finns i Order-klassen
             existingOrder.StartDate = orderDto.StartDate;
             existingOrder.EndDate = orderDto.EndDate;
             existingOrder.Price = orderDto.Price;
@@ -108,8 +104,6 @@ namespace MarcusRent.Api.Controllers
 
             return NoContent();
         }
-
-
 
         // DELETE: api/orders/{id}
         [HttpDelete("{id}")]

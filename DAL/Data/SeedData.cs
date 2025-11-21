@@ -1,5 +1,5 @@
 ﻿using DAL.Classes;
-using DAL.Repositories;
+using DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -87,7 +87,7 @@ public class SeedData
         var newCars = new List<Car>
         {
             new Car {
-                Brand = "Bond", Model = "Bug", Year = 1970, PricePerDay = 800, Available = true,  
+                Brand = "Bond", Model = "Bug", Year = 1970, PricePerDay = 800, Available = true,
                 CarDescription ="Bond Bug 1970 är en lätt och smidig trehjuling med bakhjulsdrift, låg tyngdpunkt och en pigg 700 cc motor. Tack vare sin låga vikt och direkta styrning känns den kvick, lekfull och oväntat sportig på småvägar. Med plats för två, öppningsbart tak istället för dörrar och en stilren, avskalad interiör är det en körupplevelse som garanterat väcker uppmärksamhet – och leenden.",
                 CarImages = new List<CarImage> {
                     new CarImage { Url = "https://silodrome.com/wp-content/uploads/2015/05/Bond-Bug-1.jpg" },
@@ -95,16 +95,16 @@ public class SeedData
                 }
             },
             new Car {
-                Brand = "Volkswagen", Model = "Type 181", Year = 1968, PricePerDay = 1200, Available = true, 
+                Brand = "Volkswagen", Model = "Type 181", Year = 1968, PricePerDay = 1200, Available = true,
                 CarDescription ="Enkel, robust och oväntat rolig – VW Type 181 är bilen som trivs bäst med dammiga hjul och vinden i takluckan. Den bakhjulsdrivna konstruktionen, det luftkylda motornavet bak och den höga markfrigången ger en överraskande terrängvänlig körupplevelse. Med sin spartanska inredning, avtagbara dörrar och fällbara vindruta är den lika mycket ett fordon som en livsstil. Oavsett om du rullar mot stranden eller ut på äventyr känns det som att köra ett leende på hjul.",
                 CarImages = new List<CarImage> {
                     new CarImage { Url = "https://vochomania.mx/wp-content/uploads/2021/01/5d03cceb052ed_AMARILLO_3.jpg" },
                     new CarImage { Url = "https://dealeraccelerate-all.s3.amazonaws.com/ideal/images/3/8/7/387/1922c9af07d9_hd_1973-volkswagen-thing.jpg" }
-                   
+
                 }
             },
             new Car {
-                Brand = "Nissan", Model = "S Cargo", Year = 1989, PricePerDay = 750, Available = true,  
+                Brand = "Nissan", Model = "S Cargo", Year = 1989, PricePerDay = 750, Available = true,
                 CarDescription ="Med sin unika design som sticker ut från mängden är Nissan S-Cargo både lättkörd och funktionell. Den lilla frontmotorn och bakhjulsdriften ger smidig hantering i stadstrafik, samtidigt som det kompakta formatet gör parkering enkel. S-Cargo är en praktisk lastbil med oväntat mycket lastutrymme för sin storlek, perfekt för den som vill kombinera stil med funktion i vardagen eller som företagsfordon med personlighet.",
                 CarImages = new List<CarImage> {
                     new CarImage { Url = "https://images.honestjohn.co.uk/imagecache/file/crop/1200x800/media/6347067/Nissan~S-Cargo~(1).jpg" },
@@ -112,7 +112,7 @@ public class SeedData
                 }
             },
             new Car {
-                Brand = "Fiat", Model = "600 Multipla", Year = 1956, PricePerDay = 600, Available = true,  
+                Brand = "Fiat", Model = "600 Multipla", Year = 1956, PricePerDay = 600, Available = true,
                 CarDescription ="Den kompakta och charmiga Fiat 600 Multipla erbjuder överraskande rymlighet och smidighet i en liten paket. Med sin lätta vikt och enkla manövrerbarhet är den perfekt för trånga stadsgator, samtidigt som den smarta inredningen gör att hela familjen får plats. Enkel att köra, ekonomisk och med klassisk italiensk karaktär – en bil som förenar funktion och stil på ett tidlöst sätt.",
                 CarImages = new List<CarImage> {
                     new CarImage { Url = "https://stuartparrclassics.com/wp-content/uploads/2018/12/C_04_sRGB_3000x2000-1800x1198.jpg" },
@@ -120,7 +120,7 @@ public class SeedData
                 }
             },
             new Car {
-                Brand = "Corbin", Model = "Sparrow", Year = 1999, PricePerDay = 500, Available = true,  
+                Brand = "Corbin", Model = "Sparrow", Year = 1999, PricePerDay = 500, Available = true,
                 CarDescription ="Corbin Sparrow är en liten, trehjulig elbil som kombinerar kompakt design med en överraskande komfort och körglädje. Den är perfekt för stadskörning, lätt att parkera och ger en tyst, smidig resa med minimal miljöpåverkan. Med sin unika form och smala kaross sticker den ut i trafiken – en innovativ och rolig bil för den som vill ha något annorlunda och miljövänligt.",
                 CarImages = new List<CarImage> {
                     new CarImage { Url = "https://assets.rebelmouse.io/media-library/color-image-of-a-corbin-sparrow-parked-in-a-profile-position-at-the-rambler-ranch-in-colorado.jpg?id=31856449&width=980" },
@@ -141,13 +141,11 @@ public class SeedData
     {
         var existingOrders = await orderRepository.GetAllOrdersAsync();
 
-        // Om redan orders finns, eller för få användare/bilar, hoppa över
         if (existingOrders.Any() || users.Count < 1 || cars.Count < 1)
             return;
 
         var orders = new List<Order>();
 
-        // Loopar bara så många gånger som det finns minst av users och cars
         int orderCount = Math.Min(users.Count, cars.Count);
 
         for (int i = 0; i < orderCount; i++)

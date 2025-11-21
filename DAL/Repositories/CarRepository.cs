@@ -1,6 +1,6 @@
 ﻿using DAL.Classes;
 using Microsoft.EntityFrameworkCore;
-using DAL.Repositories;
+using DAL.Interfaces;
 
 public class CarRepository : ICarRepository
 {
@@ -33,7 +33,6 @@ public class CarRepository : ICarRepository
 
     public async Task UpdateAsync(Car car)
     {
-        //_context.Cars.Update(car);
         await _context.SaveChangesAsync();
     }
 

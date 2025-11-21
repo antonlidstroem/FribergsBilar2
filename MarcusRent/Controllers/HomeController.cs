@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Fribergs.Core.ViewModels;
-using MarcusRent.Repositories;
+using MarcusRent.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarcusRent.Controllers
@@ -9,22 +9,17 @@ namespace MarcusRent.Controllers
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IUserApiRepository _userApiRepository;
-        private readonly IHttpContextAccessor _contextAccessor;
+
 
         public HomeController(ILogger<HomeController> logger, IUserApiRepository userApiRepository, 
             IHttpContextAccessor contextAccessor)
             : base(userApiRepository, contextAccessor) 
         {
             _logger = logger;
-            _userApiRepository = userApiRepository;
-            _contextAccessor = contextAccessor;
             
         }
-
         public async Task<IActionResult> Index()
-        {
-          
+        {        
                 TempData["CarId"] = null;
            
             return View();

@@ -1,4 +1,5 @@
 ﻿using DAL.Classes;
+using DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -89,28 +90,22 @@ namespace DAL.Repositories
             return result.Succeeded;
         }
 
-
         public async Task<bool> UpdateUserAsync(ApplicationUser user)
         {
             var existingUser = await _userManager.FindByIdAsync(user.Id);
             if (existingUser == null)
             {
-                return false; // Om användaren inte finns
+                return false;
             }
 
-            // Uppdatera användarens fält
             existingUser.FirstName = user.FirstName;
             existingUser.LastName = user.LastName;
             existingUser.Email = user.Email;
             existingUser.ApprovedByAdmin = user.ApprovedByAdmin;
 
-            // Sätt andra fält om det behövs
-
             var result = await _userManager.UpdateAsync(existingUser);
             return result.Succeeded;
         }
-
     }
-
 }
 

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DAL.Repositories
+namespace DAL.Interfaces
 {
     public interface ICarRepository
     {
@@ -13,8 +13,6 @@ namespace DAL.Repositories
         Task UpdateAsync(Car car);
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
-
-        //public IQueryable<Car> GetAllAvailable();
         Task<List<Car>> GetAllAvailableAsync();
         Task<bool> IsCarInAnyOrderAsync(int carId);
 

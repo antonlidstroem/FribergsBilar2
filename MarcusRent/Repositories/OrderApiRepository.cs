@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using DAL.Classes;
 using Fribergs.Core.DTO;
+using MarcusRent.Interfaces;
 
 
 namespace MarcusRent.Repositories

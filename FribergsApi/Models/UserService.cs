@@ -1,5 +1,5 @@
 ﻿using DAL.Classes;
-using DAL.Repositories;
+using DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 public class UserService
@@ -12,7 +12,6 @@ public class UserService
         _repository = repository;
         _userManager = userManager;
     }
-
     public async Task<ApplicationUser?> RegisterAsync(string firstName, string lastName, string email, string password, string role)
     {
         var user = new ApplicationUser
@@ -31,13 +30,10 @@ public class UserService
 
         return user;
     }
-
-
     public Task<List<ApplicationUser>> GetAllUsersAsync()
     {
         return _repository.GetAllUsersAsync();
     }
-
     public async Task<ApplicationUser?> ValidateUserAsync(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
@@ -46,7 +42,6 @@ public class UserService
         var isValid = await _userManager.CheckPasswordAsync(user, password);
         return isValid ? user : null;
     }
-
     public async Task<IList<string>> GetRolesAsync(ApplicationUser user)
     {
         if (user == null) return new List<string>();
@@ -56,7 +51,6 @@ public class UserService
     {
         return await _userManager.FindByIdAsync(userId);
     }
-
     public async Task<ApplicationUser> GetUserByEmailAsync(string email)
     {
         return await _userManager.FindByEmailAsync(email);

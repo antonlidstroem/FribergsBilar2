@@ -22,23 +22,16 @@ namespace Fribergs.Core.ViewModels
         [Display(Name = "Till")]
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
-
         public decimal Price { get; set; }
-
         [BindNever]
         public List<SelectListItem> Cars { get; set; } = new List<SelectListItem>();
-
         public decimal PricePerDay { get; set; }
-
         public string Brand { get; set; } 
         public string Model { get; set; } 
         public int Year { get; set; }
-
         public string CarName { get; set; } = "";
         public string CustomerName { get; set; } = "";
-
         public string CarDescription { get; set; } = "";
-
         public string CustomerId { get; set; } = "";
         public string UserId { get; set; } = "";
         

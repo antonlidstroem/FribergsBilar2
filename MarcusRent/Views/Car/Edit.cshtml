@@ -9,7 +9,7 @@
 
 <h1 class="page-title">REDIGERA BIL</h1>
 
-@*<form asp-action="Edit" method="post">*@
+
 <form asp-action="Edit">
 
 	<input type="hidden" asp-for="CarId" />
@@ -61,21 +61,6 @@
 					   placeholder="Bildlänk..." />
 			</div>
 		}
-
-		@* Extra tomma fält för nya bilder 
-        @for (int i = Model.ImageUrls.Count; i < Model.ImageUrls.Count + 3; i++)
-        {
-            <div class="mb-2">
-                <input type="text"
-                       name="ImageUrls[@i]"
-                       class="form-control"
-                       placeholder="Ny bildlänk..." />
-            </div>
-        } *@
-
-
-
-
 	</div>
 
 	<div class="form-group form-check">

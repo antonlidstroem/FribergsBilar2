@@ -2,7 +2,7 @@
 using System.Linq;
 using AutoMapper;
 using Fribergs.Core.ViewModels;
-using MarcusRent.Repositories;
+using MarcusRent.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,8 +30,6 @@ namespace MarcusRent.Controllers
             _mapper = mapper;
             _authService = authService;
         }
-
-
         public async Task<IActionResult> Index()
         {
             var userId = GetUserIdFromToken();
@@ -55,8 +53,7 @@ namespace MarcusRent.Controllers
             {
                 Console.WriteLine($"Typ av users: {users.FirstOrDefault()?.GetType().Name}");
             }
-           
-            // Mappa Order -> AdminOrderViewModel
+
             var orderViewModels = _mapper.Map<List<OrderViewModel>>(orders);
             var customerViewModels = _mapper.Map<List<CustomerViewModel>>(users);
             var carViewModels = _mapper.Map<List<CarViewModel>>(cars);
@@ -71,13 +68,6 @@ namespace MarcusRent.Controllers
                 carVM.CurrentRentalEndDate = activeRental?.EndDate;
                 carVM.CurrentCustomerName = activeRental?.UserId;
             }
-
-            
-
-            
-
-
-            // Skapa AdminDashboardViewModel
             var vm = new AdminDashboardViewModel
             {
                 Cars = carViewModels,
@@ -95,7 +85,6 @@ namespace MarcusRent.Controllers
             await _userService.ApproveUserAsync(id);
             return RedirectToAction("Index");
         }
-
 
         private string GetUserIdFromToken()
         {
