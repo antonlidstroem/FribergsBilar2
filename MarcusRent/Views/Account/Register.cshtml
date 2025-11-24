@@ -1,28 +1,53 @@
-﻿@using Fribergs.Core.DTO
-@model RegisterUserDto
+﻿@model MarcusRent.Services.Base.UserDto
 
-<h2>Register</h2>
+@{
+    ViewData["Title"] = "Register";
+}
 
-<form method="post">
+<h2>@ViewData["Title"]</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        <p>@ViewBag.Error</p>
+    </div>
+}
+
+<form asp-action="Register" method="post">
+
+    <div class="form-group">
+        <label asp-for="FirstName"></label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LastName"></label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
     <div class="form-group">
         <label asp-for="Email"></label>
         <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Password"></label>
         <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    @* <div class="form-group">
         <label asp-for="ConfirmPassword"></label>
         <input asp-for="ConfirmPassword" type="password" class="form-control" />
-    </div>
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div> *@
 
     <button type="submit" class="btn btn-primary">Register</button>
-
-    @if (ViewBag.Error != null)
-    {
-        <p class="text-danger">@ViewBag.Error</p>
-    }
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

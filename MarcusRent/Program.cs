@@ -1,10 +1,11 @@
 using System.Net.Http.Headers;
-using MarcusRent.Repositories;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using FribergsApi.MappingProfiles;
 using MarcusRent.Interfaces;
+using MarcusRent.Repositories;
+using MarcusRent.Services.Base;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace MarcusRent
@@ -14,6 +15,8 @@ namespace MarcusRent
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
 
             // Lägg till IHttpContextAccessor för att komma åt sessionen
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -39,14 +42,20 @@ namespace MarcusRent
                 client.BaseAddress = new Uri("https://localhost:7251/");
             });
 
-            builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));  
+            builder.Services.AddHttpClient<IClient>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7251/");
+            })
+            .AddTypedClient<IClient>((httpClient, sp) => new Client("https://localhost:7251/", httpClient));
+
+
 
 
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
-            builder.Services.AddDistributedMemoryCache();
 
+            builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromHours(1);

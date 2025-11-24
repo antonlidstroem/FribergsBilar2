@@ -34,7 +34,9 @@ namespace FribergsApi.Models
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName ?? ""),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
-                new Claim(CustomClaimTypes.Uid, user.Id)            
+                new Claim(CustomClaimTypes.Uid, user.Id)
+                // new Claim("firstName", user.FirstName?? ""),
+                //new Claim("lastName", user.LastName ?? "")
             }.Union(roleClaims)
             .Union(userClaims);
 
@@ -61,25 +63,25 @@ namespace FribergsApi.Models
 
             
 
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));  
-            }
+            //foreach (var role in roles)
+            //{
+            //    claims.Add(new Claim(ClaimTypes.Role, role));  
+            //}
 
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_config["Jwt:Key"])  
-            );
+            //var key = new SymmetricSecurityKey(
+            //    Encoding.UTF8.GetBytes(_config["Jwt:Key"])  
+            //);
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            //var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"], 
-                audience: _config["Jwt:Audience"], 
-                claims: claims,  
-                expires: DateTime.UtcNow.AddDays(1), 
-                signingCredentials: creds  
-            );
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            //var token = new JwtSecurityToken(
+            //    issuer: _config["Jwt:Issuer"], 
+            //    audience: _config["Jwt:Audience"], 
+            //    claims: claims,  
+            //    expires: DateTime.UtcNow.AddDays(1), 
+            //    signingCredentials: creds  
+            //);
+            //return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

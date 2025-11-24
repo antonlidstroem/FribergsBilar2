@@ -16,18 +16,18 @@ namespace FribergsApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserService _userService;
+        //private readonly UserService _userService;
         private readonly IConfiguration _configuration;
         private readonly TokenService _tokenService;
         private readonly RefreshTokenService _refreshTokenService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthController(UserService userService, UserManager<ApplicationUser> userManager,
+        public AuthController(UserManager<ApplicationUser> userManager,
             IConfiguration configuration,
             TokenService tokenService,
             RefreshTokenService refreshTokenService)
         {
-            _userService = userService;
+           
             _configuration = configuration;
             _refreshTokenService = refreshTokenService;
             _tokenService = tokenService;
@@ -121,7 +121,7 @@ namespace FribergsApi.Controllers
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             if (email == null) return Unauthorized();
 
-            var user = await _userManager.GetUserByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null) return NotFound();
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
