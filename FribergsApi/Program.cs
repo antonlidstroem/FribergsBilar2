@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using DAL.Classes;
 using DAL.Interfaces;
 using DAL.Repositories;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace FribergsApi
@@ -50,7 +52,7 @@ namespace FribergsApi
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-            builder.Services.AddScoped<UserService>();
+            //builder.Services.AddScoped<UserService>();
 
             // CORS
             //builder.Services.AddCors(options =>
@@ -116,15 +118,17 @@ namespace FribergsApi
             })
             .AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false;
+                //options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
+                    ValidateIssuerSigningKey = true,
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    ClockSkew = TimeSpan.Zero,
+                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
                 };
             });
 

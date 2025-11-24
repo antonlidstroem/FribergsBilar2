@@ -286,7 +286,8 @@
 						@foreach (var customer in Model.Customers)
 						{
 							<tr>
-								<td>@customer.FullName</td>
+								<td>@customer.FirstName</td>
+								<td>@customer.LastName</td>
 								<td>@customer.Email</td>
 								<td><input type="checkbox" disabled @(customer.ApprovedByAdmin ? "checked" : "") /></td>
 								<td>
