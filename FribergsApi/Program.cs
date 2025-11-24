@@ -27,10 +27,16 @@ namespace FribergsApi
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionstring));
 
-            // Identity
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-                options.SignIn.RequireConfirmedAccount = false)
+            //// Identity
+            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            //    options.SignIn.RequireConfirmedAccount = false)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddDefaultTokenProviders();
+
+            builder.Services.AddIdentityCore<ApplicationUser>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddSignInManager()
                 .AddDefaultTokenProviders();
 
             builder.Services.AddScoped<TokenService>();
@@ -47,15 +53,26 @@ namespace FribergsApi
             builder.Services.AddScoped<UserService>();
 
             // CORS
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowAll", builder =>
+            //    {
+            //        builder.AllowAnyOrigin()
+            //               .AllowAnyMethod()
+            //               .AllowAnyHeader();
+            //    });
+            //});
+
+            // CORS 2
+
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", builder =>
-                {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
-                });
-            });
+                options.AddPolicy("AllowAll",
+                   b => b.AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowAnyOrigin());
+                    });
+
 
             builder.Services.AddControllers()
               .AddJsonOptions(options =>
