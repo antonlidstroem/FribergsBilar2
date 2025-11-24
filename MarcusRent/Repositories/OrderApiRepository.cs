@@ -1,9 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using DAL.Classes;
 using Fribergs.Core.DTO;
 using MarcusRent.Interfaces;
-
 
 namespace MarcusRent.Repositories
 {
@@ -18,55 +16,61 @@ namespace MarcusRent.Repositories
             _authService = authService;
         }
 
-       
-        // GET all orders
+        private void SetJwtToken()
+        {
+            var token = _authService.GetJwtToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
+        }
+
         public async Task<List<OrderDto>> GetOrdersAsync()
         {
-            AddJwtToken();
+            SetJwtToken();
             var response = await _httpClient.GetFromJsonAsync<List<OrderDto>>("api/orders");
             return response ?? new List<OrderDto>();
         }
 
-        // GET orders by user
         public async Task<List<OrderDto>> GetOrdersByUserIdAsync(string userId)
         {
-            AddJwtToken();
+            SetJwtToken();
             var response = await _httpClient.GetFromJsonAsync<List<OrderDto>>($"api/orders/user/{userId}");
             return response ?? new List<OrderDto>();
         }
 
-        // GET single order
         public async Task<OrderDto?> GetOrderByIdAsync(int id)
         {
-            AddJwtToken();
+            SetJwtToken();
             return await _httpClient.GetFromJsonAsync<OrderDto>($"api/orders/{id}");
         }
 
-        // POST new order
         public async Task AddOrderAsync(OrderDto order)
         {
-            AddJwtToken();
+            SetJwtToken();
             await _httpClient.PostAsJsonAsync("api/orders", order);
         }
 
-        // PUT update order
         public async Task UpdateOrderAsync(OrderDto order)
         {
-            AddJwtToken();
+            SetJwtToken();
             await _httpClient.PutAsJsonAsync($"api/orders/{order.OrderId}", order);
         }
 
-        // DELETE order
         public async Task DeleteOrderAsync(int id)
         {
-            AddJwtToken();
+            SetJwtToken();
             await _httpClient.DeleteAsync($"api/orders/{id}");
         }
 
-        // Check if car is booked
         public async Task<bool> IsCarBookedAsync(int carId, DateTime startDate, DateTime endDate)
         {
-            AddJwtToken();
+            SetJwtToken();
             var response = await _httpClient.GetFromJsonAsync<bool>(
                 $"api/orders/isCarBooked?carId={carId}&startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}"
             );
@@ -75,13 +79,9 @@ namespace MarcusRent.Repositories
 
         public async Task<decimal> GetTotalEarningsForCarAsync(int carId)
         {
-            AddJwtToken();
+            SetJwtToken();
             var response = await _httpClient.GetFromJsonAsync<decimal>($"api/orders/totalEarnings/{carId}");
             return response;
-        }
-        private void AddJwtToken()
-        {
-            _authService.AddJwtToken();
         }
     }
 }

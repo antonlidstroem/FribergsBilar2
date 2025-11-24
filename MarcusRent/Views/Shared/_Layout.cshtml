@@ -43,21 +43,8 @@
 							</a>
 						</li>
 
-						@inject IHttpContextAccessor HttpContextAccessor
-						@inject IUserApiRepository UserApiRepository
-
 						@{
-							bool isAdmin = false;
-							var token = HttpContextAccessor.HttpContext.Session.GetString("jwtToken");
-							if (!string.IsNullOrEmpty(token))
-							{
-								try
-								{
-									var me = UserApiRepository.GetMeAsync(token).GetAwaiter().GetResult();
-									isAdmin = me?.Roles.Contains("Admin") ?? false;
-								}
-								catch { }
-							}
+							bool isAdmin = User?.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Admin") ?? false;
 						}
 						@if (isAdmin)
 						{
@@ -67,6 +54,8 @@
 								</a>
 							</li>
 						}
+
+
 
 
 					</ul>

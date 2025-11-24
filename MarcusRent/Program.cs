@@ -21,11 +21,14 @@ namespace MarcusRent
             // Lägg till IHttpContextAccessor för att komma åt sessionen
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            //Http-klienter
-            builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
-            {
-                client.BaseAddress = new Uri("https://localhost:7251/");
-            });
+            ////Http-klienter
+            //builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+            //{
+            //    client.BaseAddress = new Uri("https://localhost:7251/");
+            //});
+
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
 
             builder.Services.AddHttpClient<ICarApiRepository, CarApiRepository>(client =>
             {
@@ -46,7 +49,9 @@ namespace MarcusRent
             {
                 client.BaseAddress = new Uri("https://localhost:7251/");
             })
-            .AddTypedClient<IClient>((httpClient, sp) => new Client("https://localhost:7251/", httpClient));
+            .AddTypedClient<IClient>((httpClient, sp) =>
+                new Client("https://localhost:7251/", httpClient)
+            );
 
 
 

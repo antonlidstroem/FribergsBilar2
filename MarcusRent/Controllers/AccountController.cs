@@ -4,6 +4,8 @@
 using MarcusRent.Services.Base;
 using MarcusRent.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using MarcusRent.Repositories;
+using System.Threading.Tasks;
 
 
 namespace MarcusRent.Controllers
@@ -24,31 +26,26 @@ namespace MarcusRent.Controllers
         }
 
         [HttpGet]
-        [Route("Login")]
+        [Route("login")]
         public IActionResult Login()
         {
             return View(new LoginUserDto());
         }
 
         [HttpPost]
+        [Route("login")]
         public async Task<IActionResult> Login(LoginUserDto model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var loginSuccess = await _authService.LoginAsync(model.Email, model.Password);
-            HttpContext.Session.SetString("userEmail", model.Email);
+            var success = await _authService.LoginAsync(model.Email, model.Password);
 
-
-            if (!loginSuccess)
+            if (!success)
             {
                 ViewBag.Error = "Felaktigt användarnamn eller lösenord.";
                 return View(model);
             }
-
-            var token = _authService.GetJwtToken();
-            HttpContext.Session.SetString("jwtToken", token);
-            HttpContext.Session.SetString("userName", model.Email);
 
             return RedirectToAction("Index", "Home");
         }
@@ -56,9 +53,9 @@ namespace MarcusRent.Controllers
 
 
         [HttpPost]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await _authService.LogoutAsync();
             return RedirectToAction("Login");
         }
 
@@ -75,15 +72,8 @@ namespace MarcusRent.Controllers
             if (!ModelState.IsValid)
                 return View(userDto);
 
-            //if (userDto.Password != userDto.ConfirmPassword)
-            //{
-            //    ModelState.AddModelError("", "Lösenorden matchar inte");
-            //    return View(userDto);
-            //}
-
             try
             {
-                //var result = await _authService.RegisterAsync(userDto.Email, userDto.Password);
                 await _client.RegisterAsync(userDto);
                 return RedirectToAction("Login");
             }
