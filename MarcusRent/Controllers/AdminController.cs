@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MarcusRent.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    //[Authorize]
     public class AdminController : Controller
     {
         private readonly ICarApiRepository _carRepository;
