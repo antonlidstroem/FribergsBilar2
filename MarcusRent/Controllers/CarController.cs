@@ -78,7 +78,7 @@ namespace MarcusRent.Controllers
                 return View(cVModel);
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Admin");
         }
 
         [HttpPost]

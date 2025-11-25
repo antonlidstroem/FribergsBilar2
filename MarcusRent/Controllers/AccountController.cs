@@ -39,26 +39,46 @@ namespace MarcusRent.Controllers
         [Route("login")]
         public async Task<IActionResult> Login(LoginUserDto model)
         {
-           
-
             if (!ModelState.IsValid)
                 return View(model);
 
-            var success = await _authService.LoginAsync(
-                model.Email, 
-                model.Password);
-
-            if (!success)
+            try
             {
-                ViewBag.Error = "Felaktigt användarnamn eller lösenord.";
+                var success = await _authService.LoginAsync(
+                    model.Email,
+                    model.Password);
+
+                if (!success)
+                {
+                    ViewBag.Error = "Felaktigt användarnamn eller lösenord.";
+                    return View(model);
+                }
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (MarcusRent.Services.Base.ApiException ex)
+            {
+                // Hantera 400 (felaktig inloggning) eller andra statuskoder
+                if (ex.StatusCode == 400)
+                {
+                    ViewBag.Error = "Felaktigt användarnamn eller lösenord.";
+                    return View(model);
+                }
+
+                // Okänt API-fel
+                ViewBag.Error = $"Fel vid inloggning: {ex.StatusCode}";
                 return View(model);
             }
-
-       
-
-            return RedirectToAction("Index", "Home");
+            catch (Exception ex)
+            {
+                // Hantera andra oväntade fel, t.ex. nätverksfel
+                ViewBag.Error = "Ett oväntat fel uppstod.";
+                return View(model);
+            }
         }
 
+
+        
 
 
         [HttpPost]

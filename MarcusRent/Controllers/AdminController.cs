@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MarcusRent.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    //[Authorize]
     public class AdminController : Controller
     {
         private readonly ICarApiRepository _carRepository;
@@ -32,14 +32,6 @@ namespace MarcusRent.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            
-
-            //var userId = GetUserIdFromToken();
-            //if (string.IsNullOrEmpty(userId))
-            //{
-            //    TempData["TempData"] = "Du måste vara inloggad för att se dina bokningar.";
-            //    return Redirect("/Identity/Account/Login");
-            //}
 
             TempData["CarId"] = null;
             var cars = await _carRepository.GetCarsAsync();

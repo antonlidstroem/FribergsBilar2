@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
-    //public class ApplicationDbContext : IdentityDbContext
+    
 {
     public DbSet<Car> Cars { get; set; }
     public DbSet<Order> Orders { get; set; }
