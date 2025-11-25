@@ -21,7 +21,9 @@ namespace FribergsApi.Models
 
         public async Task<string> GenerateAccessToken(ApplicationUser user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));
+            Console.WriteLine($"TokenService: Genererar token för {user.UserName}");
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -34,7 +36,7 @@ namespace FribergsApi.Models
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName ?? ""),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
-                new Claim(CustomClaimTypes.Uid, user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
                 // new Claim("firstName", user.FirstName?? ""),
                 //new Claim("lastName", user.LastName ?? "")
             }.Union(roleClaims)
@@ -44,9 +46,10 @@ namespace FribergsApi.Models
                 issuer: _config["JwtSettings:Issuer"],
                 audience: _config["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(Convert.ToInt32(_config["JwtSetings:DurationInMinutes"])),
+                expires: DateTime.UtcNow.AddMinutes(Convert.ToInt32(_config["JwtSettings:DurationInMinutes"])),
                 signingCredentials: credentials
                 );
+
 
             return new JwtSecurityTokenHandler().WriteToken(token);
 

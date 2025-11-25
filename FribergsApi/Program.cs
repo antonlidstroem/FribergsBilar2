@@ -118,6 +118,9 @@ namespace FribergsApi
             })
             .AddJwtBearer(options =>
             {
+                
+
+
                 //options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
@@ -125,14 +128,20 @@ namespace FribergsApi
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
+                    ClockSkew = TimeSpan.FromMinutes(2),
                     ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
                     ValidAudience = builder.Configuration["JwtSettings:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
                 };
+
             });
 
             var app = builder.Build();
+
+            //Felsökning
+            var logger = app.Logger;
+            logger.LogInformation("JWT Key used for validation: {key}", builder.Configuration["JwtSettings:Key"]);
+
 
             // Seedning
             using (var scope = app.Services.CreateScope())

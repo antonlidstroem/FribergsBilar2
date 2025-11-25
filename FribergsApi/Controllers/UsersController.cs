@@ -41,7 +41,9 @@ namespace MarcusRent.Controllers
             if (user == null)
                 return NotFound($"Användare med ID {id} hittades inte.");
 
-            return Ok(user);
+            var dto = _mapper.Map<UserDto>(user);
+            return Ok(dto);
+
         }
 
         // POST: api/users/{id}/approve
