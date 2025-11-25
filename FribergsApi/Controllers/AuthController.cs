@@ -86,13 +86,22 @@ namespace FribergsApi.Controllers
             try
             {
                 var user = await _userManager.FindByEmailAsync(userDto.Email);
-                
+                if(user == null)
+                {
+                    return Unauthorized();
+                }
+
+               
                 var passwordValid = await _userManager.CheckPasswordAsync(user, userDto.Password);
 
-                if (user == null || !passwordValid)
+                if (!passwordValid)
                 {
-                    return Unauthorized(userDto);
+                    return Unauthorized();
                 }
+
+                var roles = await _userManager.GetRolesAsync(user);
+
+                
 
                 var token = await _tokenService.GenerateAccessToken(user);
                 var refreshToken = await _refreshTokenService.GenerateRefreshTokenAsync(user.Id);
@@ -103,7 +112,9 @@ namespace FribergsApi.Controllers
                     UserId = user.Id,
                     Token = token,
                     RefreshToken = refreshToken.Token,
-                    Email = user.Email
+                    Email = user.Email,
+                    Roles = roles.ToList()
+
                 };
 
                 return Ok(response);
@@ -114,34 +125,34 @@ namespace FribergsApi.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet("me")]
-        public async Task<IActionResult> GetMe()
-        {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (email == null) return Unauthorized();
+        //[Authorize]
+        //[HttpGet("me")]
+        //public async Task<IActionResult> GetMe()
+        //{
+        //    var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        //    if (email == null) return Unauthorized();
 
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) return NotFound();
+        //    var user = await _userManager.FindByEmailAsync(email);
+        //    if (user == null) return NotFound();
 
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null) return Unauthorized();
+        //    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    if (userId == null) return Unauthorized();
 
-            var roles = await _userManager.GetRolesAsync(user);
+        //    var roles = await _userManager.GetRolesAsync(user);
 
-            var dto = new UserDto
-            {
-                UserId = userId,
-                Email = user.Email,
-                Roles = roles.ToList(),
-                //FullName = $"{user.FirstName} {user.LastName}",
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                ApprovedByAdmin = user.ApprovedByAdmin
+        //    var dto = new UserDto
+        //    {
+        //        UserId = userId,
+        //        Email = user.Email,
+        //        Roles = roles.ToList(),
+        //        //FullName = $"{user.FirstName} {user.LastName}",
+        //        FirstName = user.FirstName,
+        //        LastName = user.LastName,
+        //        ApprovedByAdmin = user.ApprovedByAdmin
 
-            };
-            return Ok(dto);
-        }
+        //    };
+        //    return Ok(dto);
+        //}
 
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto model)
@@ -160,7 +171,6 @@ namespace FribergsApi.Controllers
 
             var user = await _userManager.FindByIdAsync(refreshToken.UserId);
 
-            //var user = await _userService.GetUserByIdAsync(refreshToken.UserId);
             if (user == null)
             {
                 return Unauthorized("User not found.");

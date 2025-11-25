@@ -16,14 +16,25 @@ namespace MarcusRent.Repositories
             _client = client;
         }
 
+
+
         public async Task<bool> LoginAsync(string email, string password)
         {
             try
             {
-                var dto = new LoginUserDto { Email = email, Password = password };
-                var response = await _client.LoginAsync(dto);
+                var result = await _client.LoginAsync(new LoginUserDto
+                {
+                    Email = email,
+                    Password = password
+                });
 
-                _contextAccessor.HttpContext!.Session.SetString("jwtToken", response.Token);
+                _contextAccessor.HttpContext!.Session.SetString("jwtToken", result.Token);
+                _contextAccessor.HttpContext!.Session.SetString("refreshToken", result.RefreshToken);
+
+                //var dto = new LoginUserDto { Email = email, Password = password };
+                //var response = await _client.LoginAsync(dto);
+
+                //_contextAccessor.HttpContext!.Session.SetString("jwtToken", response.Token);              
                 return true;
             }
             
@@ -31,7 +42,7 @@ namespace MarcusRent.Repositories
             {
                 Console.WriteLine("LOGIN ERROR:");
                 Console.WriteLine(ex.StatusCode);
-                Console.WriteLine(ex.Response);    // <-- viktig!
+                Console.WriteLine(ex.Response);    
                 throw;
            
             

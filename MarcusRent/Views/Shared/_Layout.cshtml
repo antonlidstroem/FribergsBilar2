@@ -43,17 +43,20 @@
 							</a>
 						</li>
 
-						@{
+						@* @{
 							bool isAdmin = User?.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Admin") ?? false;
-						}
-						@if (isAdmin)
-						{
+						} 
+ *@
+						 
+
+						@* @if (isAdmin)
+						{ *@
 							<li class="nav-item">
 								<a class="nav-link" asp-controller="Admin" asp-action="Index">
 									<i class="bi bi-shield-lock-fill me-1"></i> Admin
 								</a>
 							</li>
-						}
+						@* } *@
 
 
 

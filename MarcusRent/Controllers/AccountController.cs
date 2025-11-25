@@ -6,6 +6,8 @@ using MarcusRent.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MarcusRent.Repositories;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+
 
 
 namespace MarcusRent.Controllers
@@ -16,10 +18,11 @@ namespace MarcusRent.Controllers
         
         private readonly IAuthService _authService;
         private readonly IClient _client;
+       
 
         public AccountController(IUserApiRepository userApiRepository, IHttpContextAccessor contextAccessor, 
             IAuthService authService, IClient client)
-            : base(userApiRepository, contextAccessor)
+            : base(userApiRepository, contextAccessor, client)
         {
             _authService = authService;
             _client = client;
@@ -36,16 +39,22 @@ namespace MarcusRent.Controllers
         [Route("login")]
         public async Task<IActionResult> Login(LoginUserDto model)
         {
+           
+
             if (!ModelState.IsValid)
                 return View(model);
 
-            var success = await _authService.LoginAsync(model.Email, model.Password);
+            var success = await _authService.LoginAsync(
+                model.Email, 
+                model.Password);
 
             if (!success)
             {
                 ViewBag.Error = "Felaktigt användarnamn eller lösenord.";
                 return View(model);
             }
+
+       
 
             return RedirectToAction("Index", "Home");
         }
