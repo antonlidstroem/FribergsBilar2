@@ -3,8 +3,6 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Fribergs.Core.DTO;
 using MarcusRent.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
 
 namespace MarcusRent.Repositories
 {
@@ -19,37 +17,46 @@ namespace MarcusRent.Repositories
             _authService = authService;
         }
 
-        // GET all cars
+        private void SetJwtToken()
+        {
+            var token = _authService.GetJwtToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+            }
+        }
+
         public async Task<List<CarDto>> GetCarsAsync()
         {
-            AddJwtToken();
+            SetJwtToken();
             var response = await _httpClient.GetFromJsonAsync<List<CarDto>>("api/cars");
             return response ?? new List<CarDto>();
         }
 
-        // GET single car
         public async Task<CarDto?> GetCarByIdAsync(int id)
         {
-            AddJwtToken();
+            SetJwtToken();
             return await _httpClient.GetFromJsonAsync<CarDto>($"api/cars/{id}");
         }
 
-        // POST new car
         public async Task<CarDto?> CreateCarAsync(CarDto car)
         {
-            AddJwtToken();
+            SetJwtToken();
             var response = await _httpClient.PostAsJsonAsync("api/cars", car);
             if (!response.IsSuccessStatusCode) return null;
 
             return await response.Content.ReadFromJsonAsync<CarDto>();
         }
 
-        //// PUT update car
         public async Task<bool> UpdateCarAsync(CarDto car)
         {
-            AddJwtToken();
+            SetJwtToken();
             Debug.WriteLine($"PUT /api/cars/{car.CarId}");
-            Debug.WriteLine($"DTO CarId: {car.CarId}");
 
             var response = await _httpClient.PutAsJsonAsync($"api/cars/{car.CarId}", car);
             var content = await response.Content.ReadAsStringAsync();
@@ -58,23 +65,16 @@ namespace MarcusRent.Repositories
             return response.IsSuccessStatusCode;
         }
 
-        // DELETE car
         public async Task<bool> DeleteCarAsync(int id)
         {
-            AddJwtToken();
+            SetJwtToken();
             var response = await _httpClient.DeleteAsync($"api/cars/{id}");
             return response.IsSuccessStatusCode;
         }
 
-        private void AddJwtToken()
-        {
-            _authService.AddJwtToken();
-        }
-
         public async Task<bool> IsCarInAnyOrderAsync(int carId)
         {
-            AddJwtToken();
-
+            SetJwtToken();
             var response = await _httpClient.GetAsync($"api/cars/{carId}/isinorder");
 
             if (!response.IsSuccessStatusCode)

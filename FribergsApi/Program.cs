@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using DAL.Classes;
 using DAL.Interfaces;
 using DAL.Repositories;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace FribergsApi
@@ -27,10 +29,16 @@ namespace FribergsApi
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionstring));
 
-            // Identity
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-                options.SignIn.RequireConfirmedAccount = false)
+            //// Identity
+            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            //    options.SignIn.RequireConfirmedAccount = false)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddDefaultTokenProviders();
+
+            builder.Services.AddIdentityCore<ApplicationUser>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddSignInManager()
                 .AddDefaultTokenProviders();
 
             builder.Services.AddScoped<TokenService>();
@@ -44,18 +52,29 @@ namespace FribergsApi
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-            builder.Services.AddScoped<UserService>();
+            //builder.Services.AddScoped<UserService>();
 
             // CORS
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowAll", builder =>
+            //    {
+            //        builder.AllowAnyOrigin()
+            //               .AllowAnyMethod()
+            //               .AllowAnyHeader();
+            //    });
+            //});
+
+            // CORS 2
+
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", builder =>
-                {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
-                });
-            });
+                options.AddPolicy("AllowAll",
+                   b => b.AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowAnyOrigin());
+                    });
+
 
             builder.Services.AddControllers()
               .AddJsonOptions(options =>
@@ -99,19 +118,30 @@ namespace FribergsApi
             })
             .AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false;
+                
+
+
+                //options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
+                    ValidateIssuerSigningKey = true,
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    ClockSkew = TimeSpan.FromMinutes(2),
+                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
                 };
+
             });
 
             var app = builder.Build();
+
+            //Felsökning
+            var logger = app.Logger;
+            logger.LogInformation("JWT Key used for validation: {key}", builder.Configuration["JwtSettings:Key"]);
+
 
             // Seedning
             using (var scope = app.Services.CreateScope())

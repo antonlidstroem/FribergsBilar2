@@ -7,7 +7,7 @@ namespace DAL.Classes
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
 
-        public string FullName => $"{FirstName} {LastName}";
+        //public string FullName => $"{FirstName} {LastName}";
     
         public bool ApprovedByAdmin { get; set; }
     }

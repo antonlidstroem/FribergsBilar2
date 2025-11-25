@@ -1,7 +1,13 @@
 ﻿using System.Net.Http;
-using Fribergs.Core.DTO;
+//using Fribergs.Core;
+//using Fribergs.Core.DTO;
+using MarcusRent.Services.Base;
 using MarcusRent.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using MarcusRent.Repositories;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+
 
 
 namespace MarcusRent.Controllers
@@ -11,38 +17,44 @@ namespace MarcusRent.Controllers
 
         
         private readonly IAuthService _authService;
+        private readonly IClient _client;
+       
 
-        public AccountController(IUserApiRepository userApiRepository, IHttpContextAccessor contextAccessor, IAuthService authService)
-            : base(userApiRepository, contextAccessor)
+        public AccountController(IUserApiRepository userApiRepository, IHttpContextAccessor contextAccessor, 
+            IAuthService authService, IClient client)
+            : base(userApiRepository, contextAccessor, client)
         {
             _authService = authService;
+            _client = client;
         }
 
         [HttpGet]
+        [Route("login")]
         public IActionResult Login()
         {
             return View(new LoginUserDto());
         }
 
         [HttpPost]
+        [Route("login")]
         public async Task<IActionResult> Login(LoginUserDto model)
         {
+           
+
             if (!ModelState.IsValid)
                 return View(model);
 
-            var loginSuccess = await _authService.LoginAsync(model.Email, model.Password);
-            HttpContext.Session.SetString("userEmail", model.Email);
+            var success = await _authService.LoginAsync(
+                model.Email, 
+                model.Password);
 
-
-            if (!loginSuccess)
+            if (!success)
             {
                 ViewBag.Error = "Felaktigt användarnamn eller lösenord.";
                 return View(model);
             }
 
-            var token = _authService.GetJwtToken();
-            HttpContext.Session.SetString("jwtToken", token);
-            HttpContext.Session.SetString("userName", model.Email);
+       
 
             return RedirectToAction("Index", "Home");
         }
@@ -50,39 +62,37 @@ namespace MarcusRent.Controllers
 
 
         [HttpPost]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await _authService.LogoutAsync();
             return RedirectToAction("Login");
         }
 
         [HttpGet]
         public IActionResult Register()
         {
-            return View(new RegisterUserDto());
+            return View(new UserDto());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterUserDto model)
+        public async Task<IActionResult> Register(UserDto userDto)
         {
+            Fribergs.Core.DebugHelper.DebugModelStatePostCreate(ModelState);
             if (!ModelState.IsValid)
-                return View(model);
+                return View(userDto);
 
-            if (model.Password != model.ConfirmPassword)
+            try
             {
-                ModelState.AddModelError("", "Lösenorden matchar inte");
-                return View(model);
+                await _client.RegisterAsync(userDto);
+                return RedirectToAction("Login");
+            }
+            catch (ApiException aex)
+            {
+                ViewBag.Error = aex.Response ?? "Kunde inte registrera användare";
+                return View(userDto);
             }
 
-            var result = await _authService.RegisterAsync(model.Email, model.Password);
-
-            if (result == null)
-            {
-                ViewBag.Error = "Kunde inte registrera användaren";
-                return View(model);
-            }
-
-            return RedirectToAction("Login");
+            
         }
 
 

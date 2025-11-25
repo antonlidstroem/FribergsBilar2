@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Fribergs.Core.ViewModels;
 using MarcusRent.Interfaces;
+using MarcusRent.Services.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarcusRent.Controllers
@@ -11,9 +12,12 @@ namespace MarcusRent.Controllers
         private readonly ILogger<HomeController> _logger;
 
 
-        public HomeController(ILogger<HomeController> logger, IUserApiRepository userApiRepository, 
-            IHttpContextAccessor contextAccessor)
-            : base(userApiRepository, contextAccessor) 
+        public HomeController(
+            ILogger<HomeController> logger, 
+            IUserApiRepository userApiRepository, 
+            IHttpContextAccessor contextAccessor,
+            IClient client)
+            : base(userApiRepository, contextAccessor, client) 
         {
             _logger = logger;
             

@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.1.0" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.10" />
@@ -22,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FribergsBilar2\Fribergs.Core\Fribergs.Core.csproj" />
     <ProjectReference Include="..\..\FribergsBilar2\FribergsApi\FribergsApi.csproj" />
+    <ProjectReference Include="..\Fribergs.Core\Fribergs.Core.csproj" />
   </ItemGroup>
 
 </Project>

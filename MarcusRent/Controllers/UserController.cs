@@ -35,7 +35,7 @@ namespace MarcusRent.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("UserId,FullName,Email,ApprovedByAdmin")] CustomerViewModel vm)
+        public async Task<IActionResult> Edit([Bind("UserId,FirstName,LastName,Email,ApprovedByAdmin")] CustomerViewModel vm)
         {
             DebugHelper.DebugModelStatePostCreate(ModelState);
 

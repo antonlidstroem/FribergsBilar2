@@ -1,78 +1,63 @@
-﻿namespace MarcusRent.Repositories
-{
-    using System.Net.Http.Headers;
-    using Fribergs.Core.DTO;
-    using MarcusRent.Interfaces;
-    using Microsoft.AspNetCore.Http;
+﻿using MarcusRent.Interfaces;
+using MarcusRent.Services.Base;
+using Microsoft.AspNetCore.Http;
 
+
+namespace MarcusRent.Repositories
+{
     public class AuthService : IAuthService
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly HttpClient _httpClient;
-        public AuthService(IHttpContextAccessor contextAccessor, HttpClient httpClient)
+        private readonly IClient _client;
+
+        public AuthService(IHttpContextAccessor contextAccessor, IClient client)
         {
             _contextAccessor = contextAccessor;
-            _httpClient = httpClient;
+            _client = client;
         }
+
+
+
         public async Task<bool> LoginAsync(string email, string password)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/login", new { Email = email, Password = password });
-                if (!response.IsSuccessStatusCode)
-                    return false;
+                var result = await _client.LoginAsync(new LoginUserDto
+                {
+                    Email = email,
+                    Password = password
+                });
 
-                var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
-                if (result == null || string.IsNullOrEmpty(result.Token))
-                    return false;
+                _contextAccessor.HttpContext!.Session.SetString("jwtToken", result.Token);
+                _contextAccessor.HttpContext!.Session.SetString("refreshToken", result.RefreshToken);
 
-                var session = _contextAccessor.HttpContext.Session;
+                //var dto = new LoginUserDto { Email = email, Password = password };
+                //var response = await _client.LoginAsync(dto);
 
-                session.SetString("jwtToken", result.Token);
-                session.SetString("userEmail", result.Email);
-                session.SetString("userId", result.UserId);
-
+                //_contextAccessor.HttpContext!.Session.SetString("jwtToken", response.Token);              
                 return true;
             }
-            catch (Exception ex)
+            
+                catch (ApiException ex)
             {
-                Console.WriteLine($"LoginAsync error: {ex.Message}");
-                return false;
+                Console.WriteLine("LOGIN ERROR:");
+                Console.WriteLine(ex.StatusCode);
+                Console.WriteLine(ex.Response);    
+                throw;
+           
+            
             }
-        }
-        public void Logout()
-        {
-            var session = _contextAccessor.HttpContext.Session;
-            session.Remove("jwtToken");
-            session.Remove("userEmail");
-            session.Remove("userId");
-        }
-        public void AddJwtToken()
-        {
-            var token = _contextAccessor.HttpContext?.Session?.GetString("jwtToken");
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization 
-                    = new AuthenticationHeaderValue("Bearer", token);
-            }
-            else
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = null;
-            }     
         }
 
         public string GetJwtToken()
         {
-            return _contextAccessor.HttpContext?.Session?.GetString("jwtToken") ?? string.Empty;
+            return _contextAccessor.HttpContext?.Session?.GetString("jwtToken") ?? "";
         }
 
-        public async Task<AuthResponse?> RegisterAsync(string email, string password)
+        public Task LogoutAsync()
         {
-            var response = await _httpClient.PostAsJsonAsync("api/auth/register", new { Email = email, Password = password });
-            if (!response.IsSuccessStatusCode) return null;
-
-            return await response.Content.ReadFromJsonAsync<AuthResponse>();
+            _contextAccessor.HttpContext?.Session.Clear();
+            return Task.CompletedTask;
         }
-
     }
 }

@@ -32,12 +32,14 @@ namespace MarcusRent.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var userId = GetUserIdFromToken();
-            if (string.IsNullOrEmpty(userId))
-            {
-                TempData["TempData"] = "Du måste vara inloggad för att se dina bokningar.";
-                return Redirect("/Identity/Account/Login");
-            }
+            
+
+            //var userId = GetUserIdFromToken();
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    TempData["TempData"] = "Du måste vara inloggad för att se dina bokningar.";
+            //    return Redirect("/Identity/Account/Login");
+            //}
 
             TempData["CarId"] = null;
             var cars = await _carRepository.GetCarsAsync();
@@ -86,15 +88,15 @@ namespace MarcusRent.Controllers
             return RedirectToAction("Index");
         }
 
-        private string GetUserIdFromToken()
-        {
-            var token = _authService.GetJwtToken();
-            if (string.IsNullOrEmpty(token)) return null;
+        //private string GetUserIdFromToken()
+        //{
+        //    var token = _authService.GetJwtToken();
+        //    if (string.IsNullOrEmpty(token)) return null;
 
-            var handler = new JwtSecurityTokenHandler();
-            var jwt = handler.ReadJwtToken(token);
-            var userIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == "id" || c.Type == "sub");
-            return userIdClaim?.Value;
-        }
+        //    var handler = new JwtSecurityTokenHandler();
+        //    var jwt = handler.ReadJwtToken(token);
+        //    var userIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == "id" || c.Type == "sub");
+        //    return userIdClaim?.Value;
+        //}
     }
 }

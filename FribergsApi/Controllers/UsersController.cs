@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DAL.Classes;
 using AutoMapper;
-using Fribergs.Core.DTO;
+using DAL.Classes;
 using DAL.Interfaces;
+using Fribergs.Core.DTO;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MarcusRent.Controllers
 {
@@ -14,10 +16,15 @@ namespace MarcusRent.Controllers
     {
         private readonly IApplicationUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public UsersController(IApplicationUserRepository userRepository, IMapper mapper)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public UsersController(
+            IApplicationUserRepository userRepository, 
+            IMapper mapper,
+            UserManager<ApplicationUser> userManager)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         // GET: api/users
@@ -40,10 +47,17 @@ namespace MarcusRent.Controllers
             if (user == null)
                 return NotFound($"Användare med ID {id} hittades inte.");
 
-            return Ok(user);
+            var dto = _mapper.Map<UserDto>(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            dto.Roles = roles.ToList();
+           
+
+            return Ok(dto);
+
         }
 
         // POST: api/users/{id}/approve
+        [Authorize]
         [HttpPost("{id}/approve")]
         public async Task<ActionResult> ApproveUser(string id)
         {
@@ -58,6 +72,7 @@ namespace MarcusRent.Controllers
         }
 
         // PUT: api/users/{id}
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateUser(string id, [FromBody] UserDto userDto)
         {
@@ -77,6 +92,7 @@ namespace MarcusRent.Controllers
         }
 
         // DELETE: api/users/{id}
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(string id)
         {
@@ -89,5 +105,6 @@ namespace MarcusRent.Controllers
             await _userRepository.DeleteUserAsync(id);
             return Ok($"Användaren med ID {id} har tagits bort.");
         }
+
     }
 }
